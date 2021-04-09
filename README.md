@@ -20,11 +20,11 @@
 
 ## Result
 下面是部分项目演示效果：
-- **应用消息推送**
-![](https://gitee.com/gentlecp/ImgUrl/raw/master/20210408232750.png)
-- **群聊机器人消息推送**
-![](https://gitee.com/gentlecp/ImgUrl/raw/master/20210409101220.png)
-  
+- **应用消息推送**  
+![img.png](img/app.png)
+- **群聊机器人消息推送**  
+![img_2.png](img/bot.png)
+
 ## Features
 目前实现了两种推送消息方式，**应用消息推送**和**群聊机器人消息推送**，具体效果参考[使用教程](docs/usage.md)
 
@@ -54,7 +54,14 @@
 ```python
 pip install -U corpwechatbot
 ```
-- 使用
+或者
+```python
+git clone https://github.com/GentleCP/corpwechat-bot.git
+cd corpwechat-bot
+python setup.py build
+python setup.py install
+```
+- 使用   
 [点此](docs/usage.md)查看使用教程
 
 ## Author

@@ -22,7 +22,7 @@ from corpwechatbot.util import is_image, is_voice, is_video, is_file
 
 
 CUR_PATH = Path(__file__)
-TOKEN_PATH = CUR_PATH.parent.parent.joinpath('token.txt')  # 存储在本项目根目录下
+TOKEN_PATH = CUR_PATH.parent.joinpath('token.txt')  # 存储在本项目根目录下
 
 
 class AppMsgSender(MsgSender):

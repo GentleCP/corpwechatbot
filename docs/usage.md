@@ -13,7 +13,7 @@ app = AppMsgSender(corpid='',  # 你的企业id
                    agentid='')   # 你的应用id
 app.send_text(content="如果我是DJ，你会爱我吗？")
 ```
-> ![](https://gitee.com/gentlecp/ImgUrl/raw/master/20210408232750.png)
+> ![](../img/app.png)
 
 - **图片消息**：发送一张图片，可选`jpg,png`，大小不超过2MB，目前仅支持通过图片路径发送.
 ```python
@@ -24,7 +24,7 @@ app = AppMsgSender(corpid='',  # 你的企业id
                    agentid='')   # 你的应用id
 app.send_image(image_path='test.png')  # 图片存储路径
 ```
-> ![](https://gitee.com/gentlecp/ImgUrl/raw/master/20210408233256.png)
+> ![img.png](../img/app_image.png)
 
 - **语音消息**：发送一条语音，大小不超过2MB，时长不超过60s，必须是`.amr`格式
 ```python
@@ -35,7 +35,7 @@ app = AppMsgSender(corpid='',  # 你的企业id
                    agentid='')   # 你的应用id
 app.send_voice(voice_path='test.amr')
 ```
-> ![](https://gitee.com/gentlecp/ImgUrl/raw/master/20210408233519.png)
+> ![img_1.png](../img/app_voice.png)
 
 - **视频消息**：发送一段视频，大小不超过10MB，必须是`.mp4`格式
 ```python
@@ -46,7 +46,7 @@ app = AppMsgSender(corpid='',  # 你的企业id
                    agentid='')   # 你的应用id
 app.send_video(video_path='test.mp4')
 ```
-> ![](https://gitee.com/gentlecp/ImgUrl/raw/master/20210408233825.png)
+> ![img_2.png](../img/app_video.png)
 
 - **普通文件**：其他类型的文件，大小不超过20MB（不小于5字节）
 ```python
@@ -58,7 +58,7 @@ app = AppMsgSender(corpid='',  # 你的企业id
 app.send_file(file_path='test.txt')
 ```
 
-> ![image-20210408234312622](https://gitee.com/gentlecp/ImgUrl/raw/master/20210408234312.png)
+> ![img_3.png](../img/app_file.png)
 
 - **markdown消息（目前仅支持企业微信查看）**：markdown类型消息，支持markdown语法
 ```python
@@ -69,7 +69,7 @@ app = AppMsgSender(corpid='',  # 你的企业id
                    agentid='')   # 你的应用id
 app.send_markdown(content='# 面对困难的秘诀 \n > 加油，奥利给！')
 ```
-> ![](https://gitee.com/gentlecp/ImgUrl/raw/master/20210409095753.png)
+> ![img_5.png](../img/app_markdown.png)
 
 - **图文消息（目前仅支持企业微信查看）**：图片+文字描述+跳转链接
 ```python
@@ -83,7 +83,7 @@ app.send_news(title='性感刘公，在线征婚',
               url='https://blog.gentlecp.com',
               picurl='https://gitee.com/gentlecp/ImgUrl/raw/master/20210313141425.jpg')
 ```
-> ![](https://gitee.com/gentlecp/ImgUrl/raw/master/20210409100315.png)
+> ![img_6.png](../img/app_news.png)
 
 - **卡片消息**：发送一张卡片，带有跳转链接
 ```python
@@ -97,7 +97,7 @@ app.send_card(title='真骚哥出柜',
               url='https://blog.gentlecp.com',
               btntxt='一睹为快')
 ```
-> ![](https://gitee.com/gentlecp/ImgUrl/raw/master/20210409100631.png)
+> ![img_7.png](../img/app_card.png)
 
 
 ## 群聊机器人消息推送
@@ -111,7 +111,7 @@ bot = CorpWechatBot(key='')  # 你的机器人key，通过群聊添加机器人�
 
 bot.send_text(content='Hello World')
 ```
-> ![](https://gitee.com/gentlecp/ImgUrl/raw/master/20210409101220.png)
+> ![](../img/bot.png)
 
 - **图片消息**
 ```python
@@ -120,7 +120,7 @@ from corpwechatbot.chatbot import CorpWechatBot
 bot = CorpWechatBot(key='')  # 你的机器人key，通过群聊添加机器人获取
 bot.send_image(image_path='test.png')
 ```
-> ![](https://gitee.com/gentlecp/ImgUrl/raw/master/20210409101416.png)
+> ![img_8.png](../img/bot_image.png)
 
 - **markdown消息**
 ```python
@@ -129,7 +129,7 @@ from corpwechatbot.chatbot import CorpWechatBot
 bot = CorpWechatBot(key='')  # 你的机器人key，通过群聊添加机器人获取
 bot.send_markdown(content='# 面对困难的秘诀 \n > 加油，奥利给！')
 ```
-> ![](https://gitee.com/gentlecp/ImgUrl/raw/master/20210409101557.png)
+> ![img_9.png](../img/bot_markdown.png)
 
 - **图文消息**
 ```python
@@ -141,7 +141,7 @@ bot.send_news(title='性感刘公，在线征婚',
               url='https://blog.gentlecp.com',
               picurl='https://gitee.com/gentlecp/ImgUrl/raw/master/20210313141425.jpg')
 ```
-> ![](https://gitee.com/gentlecp/ImgUrl/raw/master/20210409101719.png)
+> ![img_10.png](../img/bot_news.png)
 
 ## 更多参数使用
 上面只是简单地列出了每个消息推送接口的使用，对于一般使用已经足够了，如果你还有更细致的要求，例如发送给指定人，消息安全性等，需要配置以下参数：
@@ -179,14 +179,14 @@ bot.send_text(content='Hello World',
               mentioned_mobile_list=['110'])
 
 ```
-> ![](https://gitee.com/gentlecp/ImgUrl/raw/master/20210409103858.png)
+> ![img_11.png](../img/bot_at.png)
 
 获取相应数据方法（进入企业微信后台->通讯录）：
-- 如何获取userID
-![](https://gitee.com/gentlecp/ImgUrl/raw/master/20210409104223.png)
-- 如何获取partyID
-![](https://gitee.com/gentlecp/ImgUrl/raw/master/20210409104325.png)
-- 如何获取tagID
-![](https://gitee.com/gentlecp/ImgUrl/raw/master/20210409104405.png)
-- 如何获取mobile：
-![](https://gitee.com/gentlecp/ImgUrl/raw/master/20210409104505.png)
+- 如何获取userID  
+![img_12.png](../img/get_userid.png)
+- 如何获取partyID  
+![img_13.png](../img/get_partyid.png)
+- 如何获取tagID  
+![img_14.png](../img/get_tagid.png)
+- 如何获取mobile  
+![img_15.png](../img/get_mobile.png)
