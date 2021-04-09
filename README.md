@@ -1,6 +1,7 @@
 # corpwechat-bot
 [![Hits](https://hits.seeyoufarm.com/api/count/incr/badge.svg?url=https%3A%2F%2Fgithub.com%2FGentleCP%2Fcorpwechat-bot&count_bg=%2379C83D&title_bg=%23555555&icon=&icon_color=%23E7E7E7&title=hits&edge_flat=false)](https://hits.seeyoufarm.com)
 ![python version](https://img.shields.io/badge/python-3.5+-blue)
+![pypi version](https://img.shields.io/pypi/v/corpwechatbot)
 
 `corpwechat-bot`是一个`python`封装的企业机器人&应用消息推送库，通过企业微信提供的api实现。
 
@@ -17,6 +18,13 @@
 - **应用消息推送** ：应用消息推送需要在企业微信中创建一个第三方应用，[参照教程](https://open.work.weixin.qq.com/wwopen/helpguide/detail?t=selfBuildApp)
 - **群聊机器人消息推送**：群聊机器人消息推送需要在你已有的企业群中添加一个机器人，然后获取相应的机器人`key`，[参照教程](https://jingyan.baidu.com/article/d45ad148cc79eb28552b80b5.html)
 
+## Result
+下面是部分项目演示效果：
+- **应用消息推送**
+![](https://gitee.com/gentlecp/ImgUrl/raw/master/20210408232750.png)
+- **群聊机器人消息推送**
+![](https://gitee.com/gentlecp/ImgUrl/raw/master/20210409101220.png)
+  
 ## Features
 目前实现了两种推送消息方式，**应用消息推送**和**群聊机器人消息推送**，具体效果参考[使用教程](docs/usage.md)
 
@@ -42,6 +50,11 @@
 [点此](docs/changelog.md)查看ChangeLog
 
 ## Usage
+- 安装
+```python
+pip install -U corpwechatbot
+```
+- 使用
 [点此](docs/usage.md)查看使用教程
 
 ## Author
