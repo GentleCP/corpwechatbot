@@ -24,7 +24,7 @@ ToC
 
 ## QuickStart
 
-> **注意**，本项目依赖于企业微信创建群聊机器人或应用，要想实现需要先注册一个属于你自己的企业微信号（个人免费），这十分简便，参照[官方网址](https://work.weixin.qq.com/)即可
+> **注意**，本项目依赖于企业微信创建群聊机器人或应用，要想实现需要先注册一个属于你自己的企业微信号（个人免费），这十分简便，参照[官方网址](https://work.weixin.qq.com/) 即可
 
 当你有了企业微信后，你还需要做一些配置，根据你自身的需求来做选择：
 
@@ -104,16 +104,9 @@ bot.send_text(content='Hello World')
 ```python
 pip install -U corpwechatbot
 ```
-或者
-```python
-git clone https://github.com/GentleCP/corpwechat-bot.git
-cd corpwechat-bot
-python setup.py build
-python setup.py install
-```
 - 使用     
 
-[点此](docs/usage.md)查看使用教程
+[点此](docs/usage.md)查看详细使用教程
 
 ## ChangeLog
 
