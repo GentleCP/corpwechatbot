@@ -49,10 +49,11 @@ app = AppMsgSender(corpid='',  # 你的企业id
                    agentid='')   # 你的应用id
 app.send_text(content="如果我是DJ，你会爱我吗？")
 ```
-
 推送结果
 
 ![img.png](img/app.png)
+
+> 现在支持直接从命令行发送消息，如`cwb -t='如果我是DJ，你会爱我吗？'`，效果同上，具体参考[使用教程](docs/usage.md#)
 
 - **群聊机器人消息推送**：发送一条文本消息到你设置了机器人的群聊
 
@@ -109,6 +110,7 @@ pip install -U corpwechatbot
 [点此](docs/usage.md)查看详细使用教程
 
 ## ChangeLog
+我强烈建议用过`corpwechatbot`的用户关注`ChangeLog`信息，以了解最新版本添加的内容  
 
 [点此](docs/changelog.md)查看ChangeLog
 
@@ -119,12 +121,12 @@ pip install -U corpwechatbot
 - [x] `fix`：token存储位置修改，初始设置保存到本地`site-packages`（后期将其移到`site-packages/corpwechatbot`目录下，方便统一）
 - [x] `docs`：readme和usage更新
 - [ ] `feat`：更智能的调用接口（如所有发送用同一接口`send`，根据传入参数的不同自动选择）
-- [ ] `feat`：终端快捷使用，一行命令式消息发送，例如`corpwechatbot -s "hello world"`直接发送一条文本消息
+- [x] `feat`：终端快捷使用，一行命令式消息发送，例如`corpwechatbot -s "hello world"`直接发送一条文本消息
 - [ ] `refactor`：核心代码优化与重构
 - [x] `docs` : 添加`QuickStart` 
 - [ ] `feat`：添加对应用消息发送到企业微信群聊的支持
 - [ ] `feat`：添加应用消息任务卡片消息推送的功能（小程序消息暂不考虑）
-
+- [x] `feat`：允许将企业微信配置信息存储到本地文件读取
 
 ## Author
 

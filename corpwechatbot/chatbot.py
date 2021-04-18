@@ -11,7 +11,6 @@
 -----------------End-----------------------------
 """
 import base64
-import requests
 from pathlib import Path
 from hashlib import md5
 from cptools import LogHandler
@@ -24,13 +23,14 @@ class CorpWechatBot(MsgSender):
     """
     企业微信机器人，支持文本、markdown、图片、图文、文件类型数据的发送
     """
-    def __init__(self, key, ):
+    def __init__(self, key:str=''):
         super().__init__()
-        self.__key = key
+        self.__key = self._get_corpkeys(key=key).get('key', '')
         self._webhook = f'https://qyapi.weixin.qq.com/cgi-bin/webhook/send?key={self.__key}'
         # self.__filehook = f"https://qyapi.weixin.qq.com/cgi-bin/webhook/upload_media?key={self.__key}&type=file"
         self.headers = {'Content-Type': 'application/json; charset=utf-8'}
         self.logger = LogHandler('CorpWechatBot')
+        self._media_api = f'https://qyapi.weixin.qq.com/cgi-bin/webhook/upload_media?key={self.__key}&type=file'
 
 
     def send_text(self, content, mentioned_list=[], mentioned_mobile_list=[]):
@@ -59,6 +59,23 @@ class CorpWechatBot(MsgSender):
             return self._post(data)
 
 
+    def _send_image(self, img_base64, img_md5):
+        '''
+        发送图片
+        :param img_base64: 图片转换成base64数据
+        :param img_md5: 图片md5值
+        :return:
+        '''
+        data =  {
+            "msgtype": "image",
+            "image": {
+                "base64": img_base64,
+                "md5": img_md5
+            }
+        }
+        return self._post(data)
+
+
     def send_image(self, image_path=None):
         '''
         发送图片类型，限制大小2M，支持JPG，PNG格式
@@ -76,23 +93,6 @@ class CorpWechatBot(MsgSender):
             img_base64 = base64.b64encode(img_content).decode()
             img_md5 = md5(img_content).hexdigest()
             return self._send_image(img_base64, img_md5)
-
-
-    def _send_image(self, img_base64, img_md5):
-        '''
-        发送图片
-        :param img_base64: 图片转换成base64数据
-        :param img_md5: 图片md5值
-        :return:
-        '''
-        data =  {
-            "msgtype": "image",
-            "image": {
-                "base64": img_base64,
-                "md5": img_md5
-            }
-        }
-        return self._post(data)
 
 
     def send_news(self, title, desp=None, url='', picurl=''):
@@ -149,27 +149,6 @@ class CorpWechatBot(MsgSender):
             return self._post(data)
 
 
-    def _get_media_id_or_None(self,
-                              media_type:str,
-                              p_media:Path):
-        '''
-        :param media_type:
-        :param p_media:
-        :return:
-        '''
-        media_api = f'https://qyapi.weixin.qq.com/cgi-bin/webhook/upload_media?key={self.__key}&type=file'
-        files = {
-            (None, (p_media.name, p_media.open('rb'), f'{media_type}/{p_media.suffix[1:]}'))
-        }
-        res = requests.post(media_api, files=files).json()
-        if res.get('errcode') == 0:
-            self.logger.debug("media_id获取成功")
-            return res.get('media_id')
-        else:
-            self.logger.error(f"media_id获取失败，原因:{res.get('errmsg')}")
-            return None
-
-
     def send_file(self, file_path:str):
         '''
         发送文件
@@ -201,6 +180,5 @@ class CorpWechatBot(MsgSender):
 
 
 if __name__ == '__main__':
-    from settings import KEY
-    bot = CorpWechatBot(key=KEY)
-    bot.send_image('../tests/data/test.png')
+    bot = CorpWechatBot()
+

@@ -13,11 +13,15 @@
 import requests
 import json
 import time
+import configparser
 from pathlib import Path
 from abc import abstractmethod
 from queue import Queue
+from configparser import ConfigParser
 
 from cptools import LogHandler
+
+KEY_PATH = Path.home().joinpath('.corpwechatbot_key')
 
 
 class NetworkError(Exception):
@@ -50,11 +54,28 @@ class TokenGetError(Exception):
     def __str__(self):
         return self.errmsg
 
+class MethodNotImplementedError(Exception):
+
+    def __str__(self):
+        return 'This method has not been implemented yet, your are not able to use it right now'
+
+class AbstractMethdoCallError(Exception):
+
+    def __str__(self):
+        return 'This method is not allowed to call while it is only a abstractmethod'
+        
+class KeyConfigError(Exception):
+
+    def __str__(self):
+        return f'Can not get the keys from {KEY_PATH}, make sure you have set the correct sections and options'
+
+
 class MsgSender(object):
     """
     The parent class of all the notify objects
     """
-    def __init__(self, **kwargs):
+    def __init__(self, *args, **kwargs):
+        super(MsgSender, self).__init__()
         self.logger = LogHandler('MsgSender')
         self.queue = Queue(20)  # 官方限制每分钟20条消息
         self._webhook = None
@@ -70,6 +91,8 @@ class MsgSender(object):
             'carderror': '卡片消息不合法',
             'mediaerror': 'media_id获取失败',
         }
+        self._media_api = ''
+        self.key_cfg = ConfigParser()
 
     @abstractmethod
     def send_text(self, *args,**kwargs):
@@ -77,6 +100,8 @@ class MsgSender(object):
         send text message
         :return:
         '''
+        raise AbstractMethdoCallError
+
 
     @abstractmethod
     def send_image(self, *args, **kwargs):
@@ -84,6 +109,23 @@ class MsgSender(object):
         send image message
         :return:
         '''
+        raise AbstractMethdoCallError
+
+
+    @abstractmethod
+    def send_voice(self, *args, **kwargs):
+        '''
+        发送语音消息
+        '''
+        raise AbstractMethdoCallError
+
+
+    @abstractmethod
+    def send_video(self, *args, **kwargs):
+        '''
+        发送视频消息
+        '''
+        raise AbstractMethdoCallError
 
 
     @abstractmethod
@@ -92,6 +134,7 @@ class MsgSender(object):
         send news
         :return:
         '''
+        raise AbstractMethdoCallError
 
 
     @abstractmethod
@@ -100,6 +143,7 @@ class MsgSender(object):
         send markdown message
         :return:
         '''
+        raise AbstractMethdoCallError
 
 
     @abstractmethod
@@ -108,8 +152,71 @@ class MsgSender(object):
         send file
         :return:
         '''
+        raise AbstractMethdoCallError
+
+
 
     @abstractmethod
+    def send_card(self, *args, **kwargs):
+        '''
+        发送卡片消息
+        '''
+        raise AbstractMethdoCallError
+
+
+    @abstractmethod
+    def send_taskcard(self, *args, **kwargs):
+        '''
+        发送卡片消息
+        '''
+        raise AbstractMethdoCallError
+
+
+    def _get_corpkeys(self, *args, **kwargs):
+        '''
+        当没有直接传入keys时，尝试从本地文件`$HOME/.corpwechatbot_key`获取
+        :param args:
+        :param kwargs:
+        :return:
+        '''
+        def get_local_keys(section:str, options:[]):
+            self.logger.debug('You have not deliver a key parameter, try to get it from local files')
+            if KEY_PATH.is_file():
+                self.key_cfg.read(KEY_PATH)
+                try:
+                    for option in options:
+                        yield self.key_cfg.get(section, option)
+                except (configparser.NoSectionError,configparser.NoOptionError) as e:
+                    raise KeyConfigError
+            else:
+                raise FileNotFoundError(f'Can not find file `{KEY_PATH}`')
+
+        if 'key' in kwargs.keys():
+            # chatbot settings
+            if kwargs.get('key'):
+                return {
+                    'key': kwargs.get('key')
+                }
+            else:
+                return {
+                    'key' : next(get_local_keys(section='chatbot', options=['key']))
+                }
+        elif 'corpid' in kwargs.keys():
+            corpid, corpsecret, agentid = kwargs.get('corpid',''), kwargs.get('corpsecret',''),kwargs.get('agentid','')
+            if corpid and corpsecret and agentid:
+                return {
+                    'corpid' : corpid,
+                    'corpsecret': corpsecret,
+                    'agentid': agentid,
+                }
+            else:
+                res = {}
+                options = ['corpid', 'corpsecret', 'agentid']
+                for k,v in zip(options, get_local_keys(section='app', options=options)):
+                    res.update({k: v})
+                return res
+
+
     def _get_media_id_or_None(self,
                               media_type:str,
                               p_media:Path):
@@ -119,6 +226,17 @@ class MsgSender(object):
         :param p_media:
         :return:
         '''
+        files = {
+            (None, (p_media.name, p_media.open('rb'), f'{media_type}/{p_media.suffix[1:]}'))
+        }
+        res = requests.post(self._media_api, files=files).json()
+        if res.get('errcode') == 0:
+            self.logger.debug("media_id获取成功")
+            return res.get('media_id')
+        else:
+            self.logger.error(f"media_id获取失败，原因:{res.get('errmsg')}")
+            return None
+
 
     def _post(self, data):
         '''
@@ -165,3 +283,7 @@ class MsgSender(object):
                     self.logger.error(f"发送失败!，原因：{result['errmsg']}")
                     return result
 
+
+if __name__ == '__main__':
+    sender = MsgSender()
+    sender.send_text('tetest')

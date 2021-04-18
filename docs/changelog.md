@@ -1,4 +1,8 @@
 # ChangeLog
+## v0.2.0: 21/04/18
+- `feat`: 允许在本地创建文件读取企业微信配置，避免每次程序都要传入
+- `feat`: 支持在命令行直接执行包发送信息，如`cwb -u='app' -t='hello world'`
+- `fix`：token存储位置修改，初始设置保存到本地`site-packages`（后期将其移到`site-packages/corpwechatbot`目录下，方便统一）
 
 ## v0.1.0: 2021/04/09
 - 项目初始化建立

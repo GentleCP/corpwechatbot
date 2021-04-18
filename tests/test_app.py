@@ -12,13 +12,12 @@
 """
 
 import unittest
-
 from corpwechatbot.app import AppMsgSender
-from settings import CORPID,CORPSECRET,AGENTID
+
 
 class TestAppMsgSender(unittest.TestCase):
 
-    ams = AppMsgSender(corpid=CORPID, corpsecret=CORPSECRET, agentid=AGENTID)
+    ams = AppMsgSender()
 
     def test_send_text(self):
         '''
@@ -28,6 +27,7 @@ class TestAppMsgSender(unittest.TestCase):
         res = self.ams.send_text(content="Hi, it's GentleCP")
         self.assertEqual(res.get('errcode', 1), 0)
 
+
     def test_send_voice(self):
         '''
         测试语音发送
@@ -35,6 +35,7 @@ class TestAppMsgSender(unittest.TestCase):
         '''
         res = self.ams.send_voice(voice_path="data/test.amr")
         self.assertEqual(res.get('errcode', 1), 0)
+
 
     def test_send_image(self):
         '''

@@ -12,36 +12,46 @@
 """
 import time
 import requests
+from configparser import ConfigParser
 from typing import Optional
 from pathlib import Path
 from cptools import LogHandler
 
 from corpwechatbot._sender import MsgSender
-from corpwechatbot._sender import TokenGetError, MediaGetError
+from corpwechatbot._sender import TokenGetError, MethodNotImplementedError
 from corpwechatbot.util import is_image, is_voice, is_video, is_file
-
 
 CUR_PATH = Path(__file__)
 TOKEN_PATH = CUR_PATH.parent.joinpath('token.txt')  # 存储在本项目根目录下
 
+class KeyNotFound(Exception):
+
+    def __str__(self):
+        return f'Can not find file `{str(Path.home())}/.corpwechatbot_key`'
 
 class AppMsgSender(MsgSender):
     """
     应用消息推送器，支持文本、图片、语音、视频、文件、文本卡片、图文、markdown消息推送
     """
-    def __init__(self, corpid:str, corpsecret:str, agentid:str):
+    def __init__(self,
+                 corpid:str='',
+                 corpsecret:str='',
+                 agentid:str=''):
         '''
         :param corpid: 企业id
         :param corpsecret: 应用密钥
         :param agentid: 应用id
         '''
         super().__init__()
-        self._corpid = corpid
-        self._corpsecret = corpsecret
-        self._agentid = agentid
+        corpkeys = self._get_corpkeys(corpid=corpid, corpsecret=corpsecret, agentid=agentid)
+        self._corpid = corpkeys.get('corpid', '')
+        self._corpsecret = corpkeys.get('corpsecret', '')
+        self._agentid = corpkeys.get('agentid', '')
+
         self.access_token = self.get_assess_token()
         self._webhook = f'https://qyapi.weixin.qq.com/cgi-bin/message/send?access_token={self.access_token}'
         self.logger = LogHandler('AppMsgSender')
+
 
     def get_assess_token(self):
         '''
@@ -85,6 +95,54 @@ class AppMsgSender(MsgSender):
         return "".join([item + '|' for item in datas])[:-1]
 
 
+    def _send_media(self,
+                    media_path: str,
+                    media_type: str,
+                    touser=['@all'],
+                    toparty:Optional=[],
+                    totag:Optional=[],
+                    safe:Optional[bool]=False):
+        '''
+        发送媒体文件统一方法
+        :param media_path:
+        :param media_type: 媒体类型，目前包括image, voice, video, file
+        :param touser:
+        :param toparty:
+        :param totag:
+        :param safe:
+        :return:
+        '''
+        is_func = globals().get('is_' + media_type)  # 根据media类型，自动定位检测函数
+        if not is_func(media_path):
+            self.logger.error(self.errmsgs[f'{media_type}error'])
+            return {
+                'errcode': 404,
+                'errmsg': self.errmsgs[f'{media_type}error']
+            }
+        else:
+            # send media
+            self._media_api = f'https://qyapi.weixin.qq.com/cgi-bin/media/upload?access_token={self.access_token}&type={media_type}'
+            media_id = self._get_media_id_or_None(media_type=media_type, p_media=Path(media_path))
+            if media_id:
+                data =  {
+                    "touser" : self._list2str(touser),
+                    "toparty" : self._list2str(toparty),
+                    "totag" : self._list2str(totag),
+                    "msgtype" : media_type,
+                    "agentid" : self._agentid,
+                    media_type : {
+                        "media_id" : media_id
+                    },
+                    "safe": 1 if safe else 0,
+                }
+                return self._post(data)
+            else:
+                return {
+                    'errcode': 405,
+                    'errmsg': self.errmsgs['mediaerror']
+                }
+
+
     def send_text(self,
                   content:str,
                   touser=['@all'],
@@ -121,72 +179,6 @@ class AppMsgSender(MsgSender):
             return self._post(data)
 
 
-    def _get_media_id_or_None(self,
-                              media_type:str,
-                              p_media:Path):
-        '''
-        :param media_type:
-        :param p_media:
-        :return:
-        '''
-        media_api = f'https://qyapi.weixin.qq.com/cgi-bin/media/upload?access_token={self.access_token}&type={media_type}'
-        files = {
-            (None, (p_media.name, p_media.open('rb'), f'{media_type}/{p_media.suffix[1:]}'))
-        }
-        res = requests.post(media_api, files=files).json()
-        if res.get('errcode') == 0:
-            self.logger.debug("media_id获取成功")
-            return res.get('media_id')
-        else:
-            self.logger.error(f"media_id获取失败，原因:{res.get('errmsg')}")
-            return None
-
-
-    def _send_media(self,
-                    media_path: str,
-                    media_type: str,
-                    touser=['@all'],
-                    toparty:Optional=[],
-                    totag:Optional=[],
-                    safe:Optional[bool]=False):
-        '''
-        发送媒体文件统一方法
-        :param media_path:
-        :param media_type: 媒体类型，目前包括image, voice, video, file
-        :param touser:
-        :param toparty:
-        :param totag:
-        :param safe:
-        :return:
-        '''
-        is_func = globals().get('is_' + media_type)  # 根据media类型，自动定位检测函数
-        if not is_func(media_path):
-            self.logger.error(self.errmsgs[f'{media_type}error'])
-            return {
-                'errcode': 404,
-                'errmsg': self.errmsgs[f'{media_type}error']
-            }
-        else:
-            # send media
-            media_id = self._get_media_id_or_None(media_type=media_type, p_media=Path(media_path))
-            if media_id:
-                data =  {
-                    "touser" : self._list2str(touser),
-                    "toparty" : self._list2str(toparty),
-                    "totag" : self._list2str(totag),
-                    "msgtype" : media_type,
-                    "agentid" : self._agentid,
-                    media_type : {
-                        "media_id" : media_id
-                    },
-                    "safe": 1 if safe else 0,
-                }
-                return self._post(data)
-            else:
-                return {
-                    'errcode': 405,
-                    'errmsg': self.errmsgs['mediaerror']
-                }
 
     def send_image(self,
                    image_path:str,
@@ -258,67 +250,6 @@ class AppMsgSender(MsgSender):
                                 safe=safe)
 
 
-    def send_file(self,
-                  file_path:str,
-                  touser=['@all'],
-                  toparty:Optional=[],
-                  totag:Optional=[],
-                  safe:Optional[bool]=False):
-        '''
-        发送文件
-        :param file_path:
-        :param touser:
-        :param toparty:
-        :param totag:
-        :param safe:
-        :return:
-        '''
-        return self._send_media(media_path=file_path,
-                                media_type='file',
-                                touser=touser,
-                                toparty=toparty,
-                                totag=totag,
-                                safe=safe)
-
-    def send_card(self,
-                  title:str,
-                  desp:str,
-                  url:str,
-                  btntxt:Optional[str],
-                  touser=['@all'],
-                  toparty:Optional=[],
-                  totag:Optional=[]):
-        '''
-        发送卡片消息
-        :param title: 标题，不超过128个字节，超过会自动截断
-        :param desp: 描述，不超过512个字节，超过会自动截断
-        :param url: 点击后跳转的链接
-        :param btntxt: 按钮文字。 默认为“详情”， 不超过4个文字，超过自动截断
-        :return:
-        '''
-        if not (title and desp and url):
-            self.logger.error(self.errmsgs['carderror'])
-            return {
-                'errcode': 404,
-                'errmsg': self.errmsgs['carderror']
-            }
-        else:
-            data = {
-                "touser" : self._list2str(touser),
-                "toparty" : self._list2str(toparty),
-                "totag" : self._list2str(totag),
-                "msgtype" : "textcard",
-                "agentid" : self._agentid,
-                "textcard" : {
-                    "title" : title,
-                    "description" : desp,
-                    "url" : url,
-                    "btntxt": btntxt
-                },
-            }
-            return self._post(data)
-
-
     def send_news(self,
                   title:str,
                   desp:Optional[str],
@@ -326,8 +257,7 @@ class AppMsgSender(MsgSender):
                   picurl:Optional[str],
                   touser=['@all'],
                   toparty:Optional=[],
-                  totag:Optional=[],
-                  ):
+                  totag:Optional=[]):
         '''
         发送图文消息
         :param title: 图文标题，不超过128个字节，超过会自动截断
@@ -398,6 +328,29 @@ class AppMsgSender(MsgSender):
             return self._post(data)
 
 
+    def send_file(self,
+                  file_path:str,
+                  touser=['@all'],
+                  toparty:Optional=[],
+                  totag:Optional=[],
+                  safe:Optional[bool]=False):
+        '''
+        发送文件
+        :param file_path:
+        :param touser:
+        :param toparty:
+        :param totag:
+        :param safe:
+        :return:
+        '''
+        return self._send_media(media_path=file_path,
+                                media_type='file',
+                                touser=touser,
+                                toparty=toparty,
+                                totag=totag,
+                                safe=safe)
+
+
     def send_card(self,
                   title:str,
                   desp:str,
@@ -408,16 +361,13 @@ class AppMsgSender(MsgSender):
                   totag:Optional=[]):
         '''
         发送卡片消息
-        :param title: 标题，不超过128个字节，超过会自动截
+        :param title: 标题，不超过128个字节，超过会自动截断
         :param desp: 描述，不超过512个字节，超过会自动截断
-        :param url: 点击后跳转的链接。最长2048字节，请确保包含了协议头(http/https)
-        :param btntxt: 按钮文字。 默认为“详情”， 不超过4个文字，超过自动截断。
-        :param touser:
-        :param toparty:
-        :param totag:
+        :param url: 点击后跳转的链接
+        :param btntxt: 按钮文字。 默认为“详情”， 不超过4个文字，超过自动截断
         :return:
         '''
-        if not (title and desp and url ):
+        if not (title and desp and url):
             self.logger.error(self.errmsgs['carderror'])
             return {
                 'errcode': 404,
@@ -440,11 +390,13 @@ class AppMsgSender(MsgSender):
             return self._post(data)
 
 
+    def send_taskcard(self, *args, **kwargs):
+        raise MethodNotImplementedError
+
+
 if __name__ == '__main__':
-    from settings import *
-    ams = AppMsgSender(CORPID,
-                       CORPSECRET,
-                       AGENTID)
-    ams.send_markdown(content='# 面对困难的秘诀 \n > 加油，奥利给！')
+    app = AppMsgSender()
+    app.send_text('jhhh')
+
 
 

@@ -10,3 +10,7 @@
             Create Date: 2021/4/6 
 -----------------End-----------------------------
 """
+
+from .__about__ import __name__, __description__, __url__, __version__
+from .__about__ import __author__, __author_email__, __license__
+
