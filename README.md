@@ -3,11 +3,27 @@
 ![python version](https://img.shields.io/badge/python-3.5+-blue)
 ![pypi version](https://img.shields.io/pypi/v/corpwechatbot)
 
-`corpwechat-bot`是一个`python`封装的企业机器人&应用消息推送库，通过企业微信提供的api实现。
+:wave: `corpwechat-bot`是一个`python`封装的企业机器人&应用消息推送库，通过企业微信提供的api实现。
 
 利用本库，你可以轻松地实现从服务器端发送一条文本、图片、视频、`markdown`等等消息到你的微信手机端，而不依赖于其他的第三方应用，如`ServerChan`。
 
 > 如果喜欢该项目，记得给个star，让更多人能够看到本项目♥️
+
+- **为什么要使用`corpwechat-bot`?(必看)**
+
+`corpwechat-bot`的定位是让用户随时随地了解服务器端程序的运行结果，同类型的方法有很多，例如邮件，钉钉（这两个的消息推送我在我的另一个库[cptools](https://github.com/GentleCP/cptools)中实现了，有兴趣的可以去看看），bark等。但对于一般人来说，最方便的接收方式还是微信，但个人微信并不提供给开发者API（以前可以用网页微信，现在被禁了）。
+
+拥有同样功能比较知名的有：`ServerChan`，之前提供公众号模板消息推送，但由于微信官方原因，在`21年4月底即将下线`，因此推出了`Turbo`版，支持企业微信消息推送。我在使用过之后发现几个主要问题:raising_hand:，并与`corpwechat-bot`进行了对比：
+
+| 对比项               | ServerChan                                                   | corpwechat-bot                                               |
+| -------------------- | ------------------------------------------------------------ | ------------------------------------------------------------ |
+| **消息推送限制**     | :disappointed_relieved: 普通用户消息推送次数限制（每天5次，会员不限） | :relaxed: ​`corpwechat-bot`直接和企业微信对接，消息发送仅受微信官方限制（每分钟20条） |
+| **个人信息安全性**   | :weary: 个人企业号、应用id和密钥由`ServerChan`云端存储，所有发送的消息也经过`ServerChan`转发（先到`ServerChan`后台，再由`ServerChan`发送到微信） | :innocent: `corpwechat-bot`本身不存储任何用户的密钥（由用户本地保存），所有消息也是直接发送到企业微信后台，保证数据安全性 |
+| **创建、使用便捷性** | :persevere: 主要使用步骤：<br />1.  用户注册企业微信<br />2.  创建`ServerChan`应用<br />3.  提交企业号、应用id、应用密钥到`ServerChan`，获取`sendKey`<br />4. 利用`sendKey`发送`http`请求到指定url完成消息发送 | :wink: 主要使用步骤：​<br />1. 用户注册企业微信<br />2. 创建个人消息推送应用，获取相应密钥<br />3. 一条命令`pip install -U corpwechatbot`安装<br />4. 利用`corpwechatbot`的消息发送接口发送消息 |
+| **消息类型支持**     | :pensive: 仅支持`title`+`description`（支持`markdown`）的消息发送格式​ | :yum: 支持文本、`markdown`，图片、语音、视频、文件、卡片等多个企业微信提供的消息类型​ |
+| **开源**             | :cry: ​不开源，所有代码均由`ServerChan`自身管控               | :sunglasses: 开源在Github​，任何人可以依据源代码添加定制自己想要的功能，或贡献自己的一份力到开源项目中 |
+
+> **特别说明**：虽然上面的对比偏向于突出`corpwechat-bot`的优势，但并没有刻意贬低`ServerChan`的意思，作为一个公开的服务，`ServerChan`的这些特性都是可以被接受的，同时`ServerChan`也是一款**非常优秀**的消息推送工具（我之前一直在使用），支持各大类型的消息推送接口（企业微信、钉钉、bark等等），但考虑到上面的几个特性，所以我选择了自己定制并开源了`corpwechat-bot`，希望给和我一样想法的用户**多一份选择**，如果你觉得上面的特性切中了你的需求点，**麻烦给作者一个小小的`star`以资鼓励吧**～:pray:。未来`corpwechat-bot`还会添加更多的功能和特性，详情查看[Todo](#todo)，当然你也可以在`issue`中提出你的合理需求，或提交PR来帮助`corpwechat-bot`做的更好!!!
 
 ToC
 -----------------
