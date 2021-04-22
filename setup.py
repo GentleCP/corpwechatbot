@@ -12,7 +12,7 @@ root_path = Path(__file__).parent
 __about__ = root_path.joinpath('corpwechatbot/__about__.py').open('r', encoding='utf-8').read()
 exec(__about__, about)
 
-with open("README.md", 'r', encoding='utf8') as f:
+with open("docs/pypidoc.md", 'r', encoding='utf8') as f:
     readme = f.read()
 
 setup(
