@@ -12,13 +12,12 @@
 """
 import time
 import requests
-from configparser import ConfigParser
 from typing import Optional
 from pathlib import Path
 from cptools import LogHandler
 
 from corpwechatbot._sender import MsgSender
-from corpwechatbot._sender import TokenGetError, MethodNotImplementedError
+from corpwechatbot.error import TokenGetError, MethodNotImplementedError
 from corpwechatbot.util import is_image, is_voice, is_video, is_file
 
 CUR_PATH = Path(__file__)
@@ -300,7 +299,7 @@ class AppMsgSender(MsgSender):
                       totag:Optional=[]):
         '''
         发送markdown消息
-        :param content: markdown文本数据
+        :param content: markdown文本数据或markdown文件路径
         :param touser:
         :param toparty:
         :param totag:
@@ -313,6 +312,9 @@ class AppMsgSender(MsgSender):
                 'errmsg': self.errmsgs['markdownerror']
             }
         else:
+            md_path = Path(content)
+            if md_path.is_file():
+                content = md_path.read_text()
             data = {
                 "touser" : self._list2str(touser),
                 "toparty" : self._list2str(toparty),
@@ -394,9 +396,7 @@ class AppMsgSender(MsgSender):
         raise MethodNotImplementedError
 
 
-if __name__ == '__main__':
-    app = AppMsgSender()
-    app.send_text('jhhh')
+
 
 
 

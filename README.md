@@ -147,7 +147,7 @@ pip install -U corpwechatbot
 - [x] `feat`：终端快捷使用，一行命令式消息发送，例如`corpwechatbot -s "hello world"`直接发送一条文本消息
 - [ ] `refactor`：核心代码优化与重构
 - [x] `docs` : 添加`QuickStart` 
-- [ ] `feat`：添加对应用消息发送到企业微信群聊的支持
+- [ ] `feat`：~~添加对应用消息发送到企业微信群聊的支持~~
 - [ ] `feat`：添加应用消息任务卡片消息推送的功能（小程序消息暂不考虑）
 - [x] `feat`：允许将企业微信配置信息存储到本地文件读取
 

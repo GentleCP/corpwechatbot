@@ -14,3 +14,5 @@
 from .__about__ import __name__, __description__, __url__, __version__
 from .__about__ import __author__, __author_email__, __license__
 
+from .chatbot import CorpWechatBot
+from .app import AppMsgSender

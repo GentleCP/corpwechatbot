@@ -130,7 +130,7 @@ class CorpWechatBot(MsgSender):
     def send_markdown(self, content):
         '''
         发送markdown类型数据，支持markdown语法
-        :param content: mardkown原始数据
+        :param content: mardkown原始数据或markdown文件路径
         :return: 消息发送结果
         '''
         if not content:
@@ -140,6 +140,9 @@ class CorpWechatBot(MsgSender):
                 'errmsg': self.errmsgs['markdownerror']
             }
         else:
+            md_path = Path(content)
+            if md_path.is_file():
+                content = md_path.read_text()
             data = {
                 "msgtype": "markdown",
                 "markdown": {

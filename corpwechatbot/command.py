@@ -10,35 +10,29 @@
             Create Date: 2021/4/18 
 -----------------End-----------------------------
 """
+from pathlib import Path
 from argparse import ArgumentParser
 from corpwechatbot.app import AppMsgSender
 from corpwechatbot.chatbot import CorpWechatBot
 
-
-def app(content, type='text'):
-    '''
-    send by app
-    :param content: text or markdown
-    :return:
-    '''
-    app = AppMsgSender()
-    if type == 'markdown':
-        app.send_markdown(content)
-    else:
-        app.send_text(content)
-
-
-def bot(content, type='text'):
-    '''
-    send by bot
-    :param content: text or markdown
-    :return:
-    '''
-    bot = CorpWechatBot()
-    if type == 'markdown':
+def send_md(use='app', content=''):
+    md_path = Path(content)
+    if md_path.is_file():
+        content = md_path.read_text()
+    if use == 'bot':
+        bot = CorpWechatBot()
         bot.send_markdown(content)
     else:
+        app = AppMsgSender()
+        app.send_markdown(content)
+
+def send_txt(use='app', content=''):
+    if use == 'bot':
+        bot = CorpWechatBot()
         bot.send_text(content)
+    else:
+        app = AppMsgSender()
+        app.send_text(content)
 
 
 def main():
@@ -47,10 +41,9 @@ def main():
     cwb_argparse.add_argument('--text', '-t', default='', type=str, help='send a text message')
     cwb_argparse.add_argument('--markdown', '-m', default='', type=str, help='send a markdown content')
     args = cwb_argparse.parse_args()
-    use_func = globals().get(args.use, 'app')  # 如果随便输入则按照app处理
     if args.text:
         # send text
-        use_func(content=args.text)
+        send_txt(use=args.use, content=args.text)
     if args.markdown:
-        use_func(content=args.markdown, type='markdown')
+        send_md(use=args.use, content=args.markdown)
 

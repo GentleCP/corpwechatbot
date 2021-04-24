@@ -15,64 +15,95 @@ import json
 import time
 import configparser
 from pathlib import Path
-from abc import abstractmethod
+from abc import abstractmethod, ABC
 from queue import Queue
 from configparser import ConfigParser
-
 from cptools import LogHandler
+
+from corpwechatbot.error import KeyConfigError, MethodNotImplementedError
+from corpwechatbot.util import Singleton
 
 KEY_PATH = Path.home().joinpath('.corpwechatbot_key')
 
 
-class NetworkError(Exception):
+class Sender(ABC):
+    '''
+    Abstract class of sender, define the interface of all the senders
+    '''
+
+    @abstractmethod
+    def send_text(self, *args,**kwargs):
+        '''
+        send text message
+        :return:
+        '''
+
+
+    @abstractmethod
+    def send_image(self, *args, **kwargs):
+        '''
+        send image message
+        :return:
+        '''
+
+
+    @abstractmethod
+    def send_voice(self, *args, **kwargs):
+        '''
+        发送语音消息
+        '''
+
+
+    @abstractmethod
+    def send_video(self, *args, **kwargs):
+        '''
+        发送视频消息
+        '''
+
+
+    @abstractmethod
+    def send_news(self, *args, **kwargs):
+        '''
+        send news
+        :return:
+        '''
+
+
+    @abstractmethod
+    def send_markdown(self, *args, **kwargs):
+        '''
+        send markdown message
+        :return:
+        '''
+
+
+    @abstractmethod
+    def send_file(self, *args, **kwargs):
+        '''
+        send file
+        :return:
+        '''
+
+
+
+    @abstractmethod
+    def send_card(self, *args, **kwargs):
+        '''
+        发送卡片消息
+        '''
+
+
+    @abstractmethod
+    def send_taskcard(self, *args, **kwargs):
+        '''
+        发送卡片消息
+        '''
+
+
+
+class MsgSender(Sender, Singleton):
     """
-    Network 请求
-    """
-    def __init__(self, errmsg='网络连接异常'):
-        self.errmsg = errmsg
-
-    def __str__(self):
-        return self.errmsg
-
-class MediaGetError(Exception):
-    """
-    media_id获取异常
-    """
-    def __init__(self, errmsg='media_id获取异常'):
-        self.errmsg = errmsg
-
-    def __str__(self):
-        return self.errmsg
-
-class TokenGetError(Exception):
-    """
-    token 获取失败异常
-    """
-    def __init__(self, errmsg='token请求失败'):
-        self.errmsg = errmsg
-
-    def __str__(self):
-        return self.errmsg
-
-class MethodNotImplementedError(Exception):
-
-    def __str__(self):
-        return 'This method has not been implemented yet, your are not able to use it right now'
-
-class AbstractMethdoCallError(Exception):
-
-    def __str__(self):
-        return 'This method is not allowed to call while it is only a abstractmethod'
-        
-class KeyConfigError(Exception):
-
-    def __str__(self):
-        return f'Can not get the keys from {KEY_PATH}, make sure you have set the correct sections and options'
-
-
-class MsgSender(object):
-    """
-    The parent class of all the notify objects
+    The parent class of all the notify classes
     """
     def __init__(self, *args, **kwargs):
         super(MsgSender, self).__init__()
@@ -94,82 +125,73 @@ class MsgSender(object):
         self._media_api = ''
         self.key_cfg = ConfigParser()
 
-    @abstractmethod
     def send_text(self, *args,**kwargs):
         '''
         send text message
         :return:
         '''
-        raise AbstractMethdoCallError
+        raise MethodNotImplementedError
 
 
-    @abstractmethod
     def send_image(self, *args, **kwargs):
         '''
         send image message
         :return:
         '''
-        raise AbstractMethdoCallError
+        raise MethodNotImplementedError
 
 
-    @abstractmethod
     def send_voice(self, *args, **kwargs):
         '''
         发送语音消息
         '''
-        raise AbstractMethdoCallError
+        raise MethodNotImplementedError
 
 
-    @abstractmethod
     def send_video(self, *args, **kwargs):
         '''
         发送视频消息
         '''
-        raise AbstractMethdoCallError
+        raise MethodNotImplementedError
 
 
-    @abstractmethod
     def send_news(self, *args, **kwargs):
         '''
         send news
         :return:
         '''
-        raise AbstractMethdoCallError
+        raise MethodNotImplementedError
 
 
-    @abstractmethod
     def send_markdown(self, *args, **kwargs):
         '''
         send markdown message
         :return:
         '''
-        raise AbstractMethdoCallError
+        raise MethodNotImplementedError
 
 
-    @abstractmethod
     def send_file(self, *args, **kwargs):
         '''
         send file
         :return:
         '''
-        raise AbstractMethdoCallError
+        raise MethodNotImplementedError
 
 
 
-    @abstractmethod
     def send_card(self, *args, **kwargs):
         '''
         发送卡片消息
         '''
-        raise AbstractMethdoCallError
+        raise MethodNotImplementedError
 
 
-    @abstractmethod
     def send_taskcard(self, *args, **kwargs):
         '''
         发送卡片消息
         '''
-        raise AbstractMethdoCallError
+        raise MethodNotImplementedError
 
 
     def _get_corpkeys(self, *args, **kwargs):
@@ -201,7 +223,7 @@ class MsgSender(object):
                 return {
                     'key' : next(get_local_keys(section='chatbot', options=['key']))
                 }
-        elif 'corpid' in kwargs.keys():
+        elif 'corpid' in kwargs.keys() or 'corpsecret' in kwargs.keys() or 'agentid' in kwargs.keys() :
             corpid, corpsecret, agentid = kwargs.get('corpid',''), kwargs.get('corpsecret',''),kwargs.get('agentid','')
             if corpid and corpsecret and agentid:
                 return {
@@ -282,8 +304,3 @@ class MsgSender(object):
                 else:
                     self.logger.error(f"发送失败!，原因：{result['errmsg']}")
                     return result
-
-
-if __name__ == '__main__':
-    sender = MsgSender()
-    sender.send_text('tetest')

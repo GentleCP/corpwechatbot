@@ -58,3 +58,12 @@ def is_file(file_path: str):
         # file no more than 2M
         return False
     return True
+
+
+class Singleton(object):
+    _instance = None
+    def __new__(cls, *args, **kwargs):
+        if cls._instance is None:
+            cls._instance = object.__new__(cls, *args, **kwargs)
+
+        return cls._instance
