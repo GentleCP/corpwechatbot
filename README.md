@@ -1,7 +1,12 @@
-# corpwechat-bot
-[![Hits](https://hits.seeyoufarm.com/api/count/incr/badge.svg?url=https%3A%2F%2Fgithub.com%2FGentleCP%2Fcorpwechat-bot&count_bg=%2379C83D&title_bg=%23555555&icon=&icon_color=%23E7E7E7&title=hits&edge_flat=false)](https://hits.seeyoufarm.com)
-![python version](https://img.shields.io/badge/python-3.5+-blue)
-![pypi version](https://img.shields.io/pypi/v/corpwechatbot)
+<p align="center">
+<a href="https://github.com/GentleCP/corpwechat-bot"><img width="300" src="https://gitee.com/gentlecp/ImgUrl/raw/master/20210425111523.png"></a>
+</p>
+
+<p align="center">
+<a href="https://hits.seeyoufarm.com"><img src="https://hits.seeyoufarm.com/api/count/incr/badge.svg?url=https%3A%2F%2Fgithub.com%2FGentleCP%2Fcorpwechat-bot&count_bg=%2379C83D&title_bg=%23555555&icon=&icon_color=%23E7E7E7&title=hits&edge_flat=false"/></a>
+<a ><img src="https://img.shields.io/badge/python-3.5%2B-blue"/></a>
+<a ><img src="https://img.shields.io/pypi/v/corpwechatbot"/></a>
+</p>
 
 :wave: `corpwechat-bot`是一个`python`封装的企业机器人&应用消息推送库，通过企业微信提供的api实现。
 
