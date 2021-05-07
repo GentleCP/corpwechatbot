@@ -80,7 +80,7 @@ app.send_text(content="如果我是DJ，你会爱我吗？")
 
 ![img.png](img/app.png)
 
-> 现在支持直接从命令行发送消息，如`cwb -t='如果我是DJ，你会爱我吗？'`，效果同上，具体参考[使用教程](docs/usage.md#)
+> 现在支持直接从命令行发送消息，如`cwb -t='如果我是DJ，你会爱我吗？'`，效果同上，具体参考[使用教程](docs/usage.md)
 
 - **群聊机器人消息推送**：发送一条文本消息到你设置了机器人的群聊
 
@@ -96,13 +96,7 @@ bot.send_text(content='Hello World')
 
 ![](img/bot.png)
 
-> 如果你未能收到相应的推送结果，请确认如下步骤：
->
-> 1. 企业微信配置是否正确：包括企业id，应用密钥、应用id，机器人`key`等
-> 2. 是否采用了最新版本的`corpwechatbot`（通常来说只要企业微信的接口不变，就不会有问题）
->
-> 如果以上都检验通过，麻烦您提交`issue`，作者会及时查看并更新解决
-
+如果你想要更多的使用技巧，请查看**Usage**
 
 
 ## Features
@@ -138,6 +132,7 @@ pip install -U corpwechatbot
 
 [点此](docs/usage.md)查看详细使用教程
 
+
 ## ChangeLog
 你可以在`ChangeLog`中查看最新版本提交的功能和bug修复信息
 [点此](docs/changelog.md)查看ChangeLog
@@ -155,6 +150,7 @@ pip install -U corpwechatbot
 - [ ] `feat`：~~添加对应用消息发送到企业微信群聊的支持~~
 - [ ] `feat`：添加应用消息任务卡片消息推送的功能（小程序消息暂不考虑）
 - [x] `feat`：允许将企业微信配置信息存储到本地文件读取
+- [x] `fix`: 修复在指定标签和部门后依然默认发送给全体成员的问题
 
 ## Author
 

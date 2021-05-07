@@ -23,19 +23,22 @@ from corpwechatbot.util import is_image, is_voice, is_video, is_file
 CUR_PATH = Path(__file__)
 TOKEN_PATH = CUR_PATH.parent.joinpath('token.txt')  # 存储在本项目根目录下
 
+
 class KeyNotFound(Exception):
 
     def __str__(self):
         return f'Can not find file `{str(Path.home())}/.corpwechatbot_key`'
 
+
 class AppMsgSender(MsgSender):
     """
     应用消息推送器，支持文本、图片、语音、视频、文件、文本卡片、图文、markdown消息推送
     """
+
     def __init__(self,
-                 corpid:str='',
-                 corpsecret:str='',
-                 agentid:str=''):
+                 corpid: str = '',
+                 corpsecret: str = '',
+                 agentid: str = ''):
         '''
         :param corpid: 企业id
         :param corpsecret: 应用密钥
@@ -50,7 +53,6 @@ class AppMsgSender(MsgSender):
         self.access_token = self.get_assess_token()
         self._webhook = f'https://qyapi.weixin.qq.com/cgi-bin/message/send?access_token={self.access_token}'
         self.logger = LogHandler('AppMsgSender')
-
 
     def get_assess_token(self):
         '''
@@ -72,8 +74,7 @@ class AppMsgSender(MsgSender):
             else:
                 return old_token
 
-
-    def _get_access_token(self, corpid:str, corpsecret:str):
+    def _get_access_token(self, corpid: str, corpsecret: str):
         token_api = f'https://qyapi.weixin.qq.com/cgi-bin/gettoken?corpid={corpid}&corpsecret={corpsecret}'
         res = requests.get(token_api).json()
         if res.get('errcode') == 0:
@@ -83,8 +84,7 @@ class AppMsgSender(MsgSender):
         else:
             raise TokenGetError(f"token请求失败，原因：{res.get('errmsg')}")
 
-
-    def _list2str(self, datas:[]):
+    def _list2str(self, datas: []):
         '''
         将传入的list数据转换成 | 划分的字符串
         e.g. ['user1', 'user2'] -> 'user1|user2'
@@ -93,22 +93,17 @@ class AppMsgSender(MsgSender):
         '''
         return "".join([item + '|' for item in datas])[:-1]
 
-
     def _send_media(self,
                     media_path: str,
                     media_type: str,
-                    touser=['@all'],
-                    toparty:Optional=[],
-                    totag:Optional=[],
-                    safe:Optional[bool]=False):
+                    safe: Optional[bool] = False,
+                    **kwargs):
         '''
-        发送媒体文件统一方法
+        发送媒体文件统一发送模板
         :param media_path:
         :param media_type: 媒体类型，目前包括image, voice, video, file
-        :param touser:
-        :param toparty:
-        :param totag:
         :param safe:
+        :param kwargs: touser, toparty, totag
         :return:
         '''
         is_func = globals().get('is_' + media_type)  # 根据media类型，自动定位检测函数
@@ -123,14 +118,17 @@ class AppMsgSender(MsgSender):
             self._media_api = f'https://qyapi.weixin.qq.com/cgi-bin/media/upload?access_token={self.access_token}&type={media_type}'
             media_id = self._get_media_id_or_None(media_type=media_type, p_media=Path(media_path))
             if media_id:
-                data =  {
-                    "touser" : self._list2str(touser),
-                    "toparty" : self._list2str(toparty),
-                    "totag" : self._list2str(totag),
-                    "msgtype" : media_type,
-                    "agentid" : self._agentid,
-                    media_type : {
-                        "media_id" : media_id
+                if not (kwargs.get('touser') or kwargs.get('toparty') or kwargs.get('totag')):
+                    # 三者均为空，默认发送全体成员
+                    kwargs.update({'touser': ['@all']})
+                data = {
+                    "touser": self._list2str(kwargs.get('touser', [])),
+                    "toparty": self._list2str(kwargs.get('toparty', [])),
+                    "totag": self._list2str(kwargs.get('totag', [])),
+                    "msgtype": media_type,
+                    "agentid": self._agentid,
+                    media_type: {
+                        "media_id": media_id
                     },
                     "safe": 1 if safe else 0,
                 }
@@ -141,21 +139,95 @@ class AppMsgSender(MsgSender):
                     'errmsg': self.errmsgs['mediaerror']
                 }
 
+    def send_image(self,
+                   image_path: str,
+                   safe: Optional[bool] = False,
+                   **kwargs):
+        '''
+        发送图片，支持jpg、png、bmp
+        :param image_path: 图片存储路径
+        :param safe:
+        :return:
+        '''
+        return self._send_media(media_path=image_path,
+                                media_type='image',
+                                safe=safe,
+                                **kwargs)
+
+    def send_voice(self,
+                   voice_path: str,
+                   safe: Optional[bool] = False):
+        '''
+        发送语音，2MB，播放长度不超过60s，仅支持AMR格式
+        :param voice_path:
+        :param safe:
+        :return:
+        '''
+        return self._send_media(media_path=voice_path,
+                                media_type='voice',
+                                safe=safe)
+
+    def send_video(self,
+                   video_path: str,
+                   safe: Optional[bool] = False):
+        '''
+        发送视频
+        :param video_path:
+        :param safe:
+        :return:
+        '''
+        return self._send_media(media_path=video_path,
+                                media_type='video',
+                                safe=safe)
+
+    def send_file(self,
+                  file_path: str,
+                  safe: Optional[bool] = False,
+                  **kwargs):
+        '''
+        发送文件
+        :param file_path:
+        :param safe:
+        :return:
+        '''
+        return self._send_media(media_path=file_path,
+                                media_type='file',
+                                safe=safe)
+
+    def _send_content(self,
+                      content_type: str,
+                      data: dict,
+                      **kwargs
+                      ):
+        '''
+        除媒体文件外消息的统一发送模板
+        :param content_type: 发送的数据类型
+        :param data: 发送的数据独有字段
+        :param kwargs: 特殊参数，包括touser,toparty, totag
+        :return:
+        '''
+        if not (kwargs.get('touser') or kwargs.get('toparty') or kwargs.get('totag')):
+            # 三者均为空，默认发送全体成员
+            kwargs.update({'touser': ['@all']})
+        data.update({
+            "touser": self._list2str(kwargs.get('touser', [])),
+            "toparty": self._list2str(kwargs.get('toparty', [])),
+            "totag": self._list2str(kwargs.get('totag', [])),
+            "msgtype": content_type,
+            "agentid": self._agentid,
+        })
+        return self._post(data)
 
     def send_text(self,
-                  content:str,
-                  touser=['@all'],
-                  toparty:Optional=[],
-                  totag:Optional=[],
-                  safe:Optional=False):
+                  content: str,
+                  safe: Optional = False,
+                  **kwargs):
         '''
         发送text消息
-        :param content: 消息内容，最长不超过2048个字节，超过将截断
-        :param touser: 要发送的用户，通过列表划分，输入成员ID，默认发送给全体，下面方法同，不再重复解释
-        :param toparty: 要发送的部门，通过列表划分，输入部门ID，当touser为@all时忽略，下面方法同，不再重复解释
-        :param totag: 发送给包含指定标签的人，通过列表划分，输入标签ID，当touser为@all时忽略，下面方法同，不再重复解释
+        :param content: 消息内容，最长不超过2048个字节，超过将
         :param safe: 是否是保密消息，False表示可对外分享，True表示不能分享且内容显示水印，默认为False，下面方法同，不再重复解释
-        :return:
+        :param kwargs: touser, toparty, totag
+        :return: send result
         '''
         if not content:
             self.logger.error(self.errmsgs['texterror'])
@@ -164,99 +236,20 @@ class AppMsgSender(MsgSender):
                 'errmsg': self.errmsgs['texterror']
             }
         else:
-            data =  {
-                "touser" : self._list2str(touser),
-                "toparty" : self._list2str(toparty),
-                "totag" : self._list2str(totag),
-                "msgtype" : "text",
-                "agentid" : self._agentid,
-                "text" : {
-                    "content" : content
+            data = {
+                "text": {
+                    "content": content
                 },
                 "safe": 1 if safe else 0,
             }
-            return self._post(data)
-
-
-
-    def send_image(self,
-                   image_path:str,
-                   touser=['@all'],
-                   toparty:Optional=[],
-                   totag:Optional=[],
-                   safe:Optional[bool]=False):
-        '''
-        发送图片，支持jpg、png、bmp
-        :param image_path: 图片存储路径
-        :param touser:
-        :param toparty:
-        :param totag:
-        :param safe:
-        :return:
-        '''
-        return self._send_media(media_path=image_path,
-                                media_type='image',
-                                touser=touser,
-                                toparty=toparty,
-                                totag=totag,
-                                safe=safe)
-
-
-
-    def send_voice(self,
-                   voice_path:str,
-                   touser=['@all'],
-                   toparty:Optional=[],
-                   totag:Optional=[],
-                   safe:Optional[bool]=False):
-        '''
-        发送语音，2MB，播放长度不超过60s，仅支持AMR格式
-        :param voice_path:
-        :param touser:
-        :param toparty:
-        :param totag:
-        :param safe:
-        :return:
-        '''
-        return self._send_media(media_path=voice_path,
-                                media_type='voice',
-                                touser=touser,
-                                toparty=toparty,
-                                totag=totag,
-                                safe=safe)
-
-
-    def send_video(self,
-                   video_path:str,
-                   touser=['@all'],
-                   toparty:Optional=[],
-                   totag:Optional=[],
-                   safe:Optional[bool]=False):
-        '''
-        发送视频
-        :param video_path:
-        :param touser:
-        :param toparty:
-        :param totag:
-        :param safe:
-        :return:
-        '''
-        return self._send_media(media_path=video_path,
-                                media_type='video',
-                                touser=touser,
-                                toparty=toparty,
-                                totag=totag,
-                                safe=safe)
-
+            return self._send_content(content_type='text', data=data, **kwargs)
 
     def send_news(self,
-                  title:str,
-                  desp:Optional[str],
-                  url:str,
-                  picurl:Optional[str],
-                  touser=['@all'],
-                  toparty:Optional=[],
-                  totag:Optional=[]):
+                  title: str,
+                  desp: Optional[str],
+                  url: str,
+                  picurl: Optional[str],
+                  **kwargs):
         '''
         发送图文消息
         :param title: 图文标题，不超过128个字节，超过会自动截断
@@ -273,36 +266,25 @@ class AppMsgSender(MsgSender):
             }
         else:
             data = {
-                "touser" : self._list2str(touser),
-                "toparty" : self._list2str(toparty),
-                "totag" : self._list2str(totag),
-                "msgtype" : "news",
-                "agentid" : self._agentid,
-                "news" : {
-                    "articles" : [
+                "news": {
+                    "articles": [
                         {
-                            "title" : title,
-                            "description" : desp,
-                            "url" : url,
-                            "picurl" : picurl
+                            "title": title,
+                            "description": desp,
+                            "url": url,
+                            "picurl": picurl
                         }
                     ]
                 },
             }
-            return self._post(data)
-
+            return self._send_content(content_type='news', data=data, **kwargs)
 
     def send_markdown(self,
                       content: str,
-                      touser=['@all'],
-                      toparty:Optional=[],
-                      totag:Optional=[]):
+                      **kwargs):
         '''
         发送markdown消息
         :param content: markdown文本数据或markdown文件路径
-        :param touser:
-        :param toparty:
-        :param totag:
         :return:
         '''
         if not content:
@@ -316,51 +298,20 @@ class AppMsgSender(MsgSender):
             if md_path.is_file():
                 content = md_path.read_text()
             data = {
-                "touser" : self._list2str(touser),
-                "toparty" : self._list2str(toparty),
-                "totag" : self._list2str(totag),
-                "msgtype": "markdown",
-                "agentid" : self._agentid,
                 "markdown": {
                     "content": content,
                 },
                 "enable_duplicate_check": 0,
                 "duplicate_check_interval": 1800
             }
-            return self._post(data)
-
-
-    def send_file(self,
-                  file_path:str,
-                  touser=['@all'],
-                  toparty:Optional=[],
-                  totag:Optional=[],
-                  safe:Optional[bool]=False):
-        '''
-        发送文件
-        :param file_path:
-        :param touser:
-        :param toparty:
-        :param totag:
-        :param safe:
-        :return:
-        '''
-        return self._send_media(media_path=file_path,
-                                media_type='file',
-                                touser=touser,
-                                toparty=toparty,
-                                totag=totag,
-                                safe=safe)
-
+            return self._send_content(content_type='markdown', data=data, **kwargs)
 
     def send_card(self,
-                  title:str,
-                  desp:str,
-                  url:str,
-                  btntxt:Optional[str],
-                  touser=['@all'],
-                  toparty:Optional=[],
-                  totag:Optional=[]):
+                  title: str,
+                  desp: str,
+                  url: str,
+                  btntxt: Optional[str],
+                  **kwargs):
         '''
         发送卡片消息
         :param title: 标题，不超过128个字节，超过会自动截断
@@ -377,26 +328,18 @@ class AppMsgSender(MsgSender):
             }
         else:
             data = {
-                "touser" : self._list2str(touser),
-                "toparty" : self._list2str(toparty),
-                "totag" : self._list2str(totag),
-                "msgtype" : "textcard",
-                "agentid" : self._agentid,
-                "textcard" : {
-                    "title" : title,
-                    "description" : desp,
-                    "url" : url,
+                "textcard": {
+                    "title": title,
+                    "description": desp,
+                    "url": url,
                     "btntxt": btntxt
                 },
             }
-            return self._post(data)
-
+            return self._send_content(content_type='textcard', data=data, **kwargs)
 
     def send_taskcard(self, *args, **kwargs):
         raise MethodNotImplementedError
 
-
-
-
-
-
+if __name__ == '__main__':
+    app = AppMsgSender()
+    app.send_text('hello world', totag=['2','1'])
