@@ -80,7 +80,9 @@ app.send_text(content="如果我是DJ，你会爱我吗？")
 
 ![img.png](img/app.png)
 
-> 现在支持直接从命令行发送消息，如`cwb -t='如果我是DJ，你会爱我吗？'`，效果同上，具体参考[使用教程](docs/usage.md)
+- **动图演示**
+
+![](img/app_msgsend.gif)
 
 - **群聊机器人消息推送**：发送一条文本消息到你设置了机器人的群聊
 
@@ -96,7 +98,13 @@ bot.send_text(content='Hello World')
 
 ![](img/bot.png)
 
+- **动图演示**
+
+![](img/bot_msgsend.gif)
+
 如果你想要更多的使用技巧，请查看**Usage**
+
+
 
 
 ## Features
