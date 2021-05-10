@@ -12,8 +12,6 @@ root_path = Path(__file__).parent
 __about__ = root_path.joinpath('corpwechatbot/__about__.py').open('r', encoding='utf-8').read()
 exec(__about__, about)
 
-with open("docs/pypidoc.md", 'r', encoding='utf8') as f:
-    readme = f.read()
 
 setup(
     name = about['__name__'],  # 包名称
@@ -23,7 +21,7 @@ setup(
     description = about['__name__'],
     license = about['__license__'],
     url = about['__url__'],
-    long_description = readme,
+    long_description = "Get more information at [Github](https://github.com/GentleCP/corpwechat-bot)",
     long_description_content_type="text/markdown",
     install_requires = requires,
     packages = setuptools.find_packages(),  # 让setuptools自动发现包

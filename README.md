@@ -131,10 +131,17 @@ bot.send_text(content='Hello World')
 - **终端一条命令式消息推送**：不需要写额外的`python`代码，直接在终端输入一条命令`cwb -t='hello world'`即可推送消息到手机微信上，具体参考[Usage](#usage)
 
 ## Usage
+> ⚠️ 当第一种安装方式失效时，请尝试第二种
 
 - 安装
 ```python
 pip install -U corpwechatbot
+```
+或者
+```python
+git clone https://github.com/GentleCP/corpwechat-bot.git
+cd corpwechat-bot
+pip install .
 ```
 - 使用     
 

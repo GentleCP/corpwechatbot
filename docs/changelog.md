@@ -1,6 +1,10 @@
 # ChangeLog
 
+## v0.2.3: 21/05/10
+- `fix`: 修复从`pypi`安装`corpwechatbot`出现的找不到`pypidoc.md`的错误
+
 ## v0.2.2: 21/05/07
+
 - `fix`: 修复在指定标签和部门id后依然默认发送给全体成员的问题
 - `refactor`: 优化重构`AppMsgSender`部分代码，更改传参机制
 - `docs`: 更新使用文档和README文档的内容
