@@ -158,7 +158,7 @@ pip install .
 
 - [x] `fix`：token存储位置修改，初始设置保存到本地`site-packages`（后期将其移到`site-packages/corpwechatbot`目录下，方便统一）
 - [x] `docs`：readme和usage更新
-- [ ] `feat`：更智能的调用接口（如所有发送用同一接口`send`，根据传入参数的不同自动选择）
+- [ ] `feat`：~~更智能的调用接口（如所有发送用同一接口`send`，根据传入参数的不同自动选择）~~
 - [x] `feat`：终端快捷使用，一行命令式消息发送，例如`corpwechatbot -s "hello world"`直接发送一条文本消息
 - [ ] `refactor`：核心代码优化与重构
 - [x] `docs` : 添加`QuickStart` 
@@ -166,6 +166,7 @@ pip install .
 - [ ] `feat`：添加应用消息任务卡片消息推送的功能（小程序消息暂不考虑）
 - [x] `feat`：允许将企业微信配置信息存储到本地文件读取
 - [x] `fix`: 修复在指定标签和部门后依然默认发送给全体成员的问题
+- [ ] `feat`: 添加装饰器发送消息支持
 
 ## Author
 

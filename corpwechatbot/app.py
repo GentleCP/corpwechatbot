@@ -82,7 +82,7 @@ class AppMsgSender(MsgSender):
             TOKEN_PATH.write_text(res.get('access_token'))
             return res.get('access_token')
         else:
-            raise TokenGetError(f"token请求失败，原因：{res.get('errmsg')}")
+            raise TokenGetError(f"token请求失败，原因：{res.get('errmsg', 'None')}")
 
     def _list2str(self, datas: []):
         '''
@@ -340,6 +340,3 @@ class AppMsgSender(MsgSender):
     def send_taskcard(self, *args, **kwargs):
         raise MethodNotImplementedError
 
-if __name__ == '__main__':
-    app = AppMsgSender()
-    app.send_text('hello world', totag=['2','1'])

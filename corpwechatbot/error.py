@@ -27,8 +27,11 @@ class MediaGetError(Exception):
 
 class TokenGetError(Exception):
 
+    def __init__(self, errmsg='token请求失败'):
+        self.errmsg = errmsg
+
     def __str__(self):
-        return 'token请求失败'
+        return self.errmsg
 
 
 class MethodNotImplementedError(Exception):

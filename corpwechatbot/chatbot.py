@@ -23,7 +23,8 @@ class CorpWechatBot(MsgSender):
     """
     企业微信机器人，支持文本、markdown、图片、图文、文件类型数据的发送
     """
-    def __init__(self, key:str=''):
+    def __init__(self,
+                 key:str = ''):
         super().__init__()
         self.__key = self._get_corpkeys(key=key).get('key', '')
         self._webhook = f'https://qyapi.weixin.qq.com/cgi-bin/webhook/send?key={self.__key}'
@@ -181,7 +182,4 @@ class CorpWechatBot(MsgSender):
                 }
 
 
-
-if __name__ == '__main__':
-    bot = CorpWechatBot()
 

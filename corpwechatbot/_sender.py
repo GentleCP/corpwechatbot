@@ -100,11 +100,11 @@ class Sender(ABC):
         '''
 
 
-
 class MsgSender(Sender, Singleton):
     """
     The parent class of all the notify classes
     """
+
     def __init__(self, *args, **kwargs):
         super(MsgSender, self).__init__()
         self.logger = LogHandler('MsgSender')
@@ -194,10 +194,9 @@ class MsgSender(Sender, Singleton):
         raise MethodNotImplementedError
 
 
-    def _get_corpkeys(self, *args, **kwargs):
+    def _get_corpkeys(self, **kwargs):
         '''
         当没有直接传入keys时，尝试从本地文件`$HOME/.corpwechatbot_key`获取
-        :param args:
         :param kwargs:
         :return:
         '''
@@ -304,3 +303,4 @@ class MsgSender(Sender, Singleton):
                 else:
                     self.logger.error(f"发送失败!，原因：{result['errmsg']}")
                     return result
+
