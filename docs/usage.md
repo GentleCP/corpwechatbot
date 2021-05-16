@@ -26,6 +26,18 @@ app = AppMsgSender(corpid='',  # 你的企业id
 # 如果你在本地配置添加了企业微信本地配置文件，也可以直接初始化AppMsgSender，而无需再显式传入密钥参数
 # app = AppMsgSender()
 ```
+> 在`v0.3.0`之后，你可以创建多个`AppMsgSender`，以实现通过多个不同的应用的消息发送，这让你可以实现在一个项目中跨用户、跨企业的消息通知，下面是一个例子
+```python
+app1 = AppMsgSender(corpid='1',  # 你的企业id
+                   corpsecret='1',  # 你的应用凭证密钥
+                   agentid='1')   # 你的应用id
+app2 = AppMsgSender(corpid='2',  # 你的企业id
+                   corpsecret='2',  # 你的应用凭证密钥
+                   agentid='2')   # 你的应用id
+app1.send_text('App1的消息') 
+app2.send_text('App2的消息')
+```
+
 完成实例创建之后，你可以通过接口实现需要的信息推送，具体包括：
 
 - **文本消息**: 最普通的消息，文字内容，最长不超过2048个字节

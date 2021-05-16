@@ -20,8 +20,7 @@ from queue import Queue
 from configparser import ConfigParser
 from cptools import LogHandler
 
-from corpwechatbot.error import KeyConfigError, MethodNotImplementedError
-from corpwechatbot.util import Singleton
+from corpwechatbot.error import KeyConfigError, MethodNotImplementedError, TokenGetError
 
 KEY_PATH = Path.home().joinpath('.corpwechatbot_key')
 
@@ -100,7 +99,7 @@ class Sender(ABC):
         '''
 
 
-class MsgSender(Sender, Singleton):
+class MsgSender(Sender):
     """
     The parent class of all the notify classes
     """
@@ -194,48 +193,23 @@ class MsgSender(Sender, Singleton):
         raise MethodNotImplementedError
 
 
-    def _get_corpkeys(self, **kwargs):
+    def _get_local_keys(self, section:str, options:[]):
         '''
         当没有直接传入keys时，尝试从本地文件`$HOME/.corpwechatbot_key`获取
-        :param kwargs:
+        :param section: 选择的section，用于指定app还是bot
+        :param options:
         :return:
         '''
-        def get_local_keys(section:str, options:[]):
-            self.logger.debug('You have not deliver a key parameter, try to get it from local files')
-            if KEY_PATH.is_file():
-                self.key_cfg.read(KEY_PATH)
-                try:
-                    for option in options:
-                        yield self.key_cfg.get(section, option)
-                except (configparser.NoSectionError,configparser.NoOptionError) as e:
-                    raise KeyConfigError
-            else:
-                raise FileNotFoundError(f'Can not find file `{KEY_PATH}`')
-
-        if 'key' in kwargs.keys():
-            # chatbot settings
-            if kwargs.get('key'):
-                return {
-                    'key': kwargs.get('key')
-                }
-            else:
-                return {
-                    'key' : next(get_local_keys(section='chatbot', options=['key']))
-                }
-        elif 'corpid' in kwargs.keys() or 'corpsecret' in kwargs.keys() or 'agentid' in kwargs.keys() :
-            corpid, corpsecret, agentid = kwargs.get('corpid',''), kwargs.get('corpsecret',''),kwargs.get('agentid','')
-            if corpid and corpsecret and agentid:
-                return {
-                    'corpid' : corpid,
-                    'corpsecret': corpsecret,
-                    'agentid': agentid,
-                }
-            else:
-                res = {}
-                options = ['corpid', 'corpsecret', 'agentid']
-                for k,v in zip(options, get_local_keys(section='app', options=options)):
-                    res.update({k: v})
-                return res
+        self.logger.debug('You have not deliver a key parameter, try to get it from local files')
+        if KEY_PATH.is_file():
+            self.key_cfg.read(KEY_PATH)
+            try:
+                for option in options:
+                    yield self.key_cfg.get(section, option)
+            except (configparser.NoSectionError,configparser.NoOptionError) as e:
+                raise KeyConfigError
+        else:
+            raise FileNotFoundError(f'Can not find file `{KEY_PATH}`')
 
 
     def _get_media_id_or_None(self,

@@ -12,16 +12,18 @@
 """
 import time
 import requests
+import json
 from typing import Optional
 from pathlib import Path
 from cptools import LogHandler
+from configparser import ConfigParser, NoSectionError, NoOptionError
 
 from corpwechatbot._sender import MsgSender
 from corpwechatbot.error import TokenGetError, MethodNotImplementedError
 from corpwechatbot.util import is_image, is_voice, is_video, is_file
 
 CUR_PATH = Path(__file__)
-TOKEN_PATH = CUR_PATH.parent.joinpath('token.txt')  # 存储在本项目根目录下
+TOKEN_PATH = CUR_PATH.parent.joinpath('token.json')  # 存储在本项目根目录下
 
 
 class KeyNotFound(Exception):
@@ -50,37 +52,69 @@ class AppMsgSender(MsgSender):
         self._corpsecret = corpkeys.get('corpsecret', '')
         self._agentid = corpkeys.get('agentid', '')
 
-        self.access_token = self.get_assess_token()
+        self.access_token = self.get_assess_token(self._agentid)
         self._webhook = f'https://qyapi.weixin.qq.com/cgi-bin/message/send?access_token={self.access_token}'
         self.logger = LogHandler('AppMsgSender')
 
-    def get_assess_token(self):
+    def _get_corpkeys(self, corpid: str = '', corpsecret: str = '', agentid: str = ''):
+        '''
+        get keys for app from parameter or local
+        :param corpid:
+        :param corpsecret:
+        :param agentid:
+        :return:
+        '''
+        if corpid and corpsecret and agentid:
+            return {
+                'corpid': corpid,
+                'corpsecret': corpsecret,
+                'agentid': agentid,
+            }
+        else:
+            # from local
+            res = {}
+            options = ['corpid', 'corpsecret', 'agentid']
+            for k, v in zip(options, self._get_local_keys(section='app', options=options)):
+                res.update({k: v})
+            return res
+
+    def get_assess_token(self, agentid: str = ''):
         '''
         通过企业id和应用凭证密钥获取assess_token，用于消息推送
-        :param corpid: 企业id，获取方式：https://work.weixin.qq.com/api/doc/90000/90135/91039#14953/corpid
-        :param corpsecret: 创建的应用凭证密钥，获取方式：https://work.weixin.qq.com/api/doc/90000/90135/91039#14953/secret
-        :return: assess_token
+        :param agentid: 获取指定agentid的token
         '''
         try:
-            old_token = TOKEN_PATH.read_text()
+            token_dict = json.loads(TOKEN_PATH.read_text())
         except FileNotFoundError:
+            # 尚未获取过token
             self.logger.debug('旧token获取失败，重新获取token')
-            return self._get_access_token(self._corpid, self._corpsecret)
+            token_dict = {}
+            return self._get_access_token(token_dict)
         else:
-            now = time.time()
-            if now - TOKEN_PATH.stat().st_mtime >= 2 * 3600:
-                self.logger.debug("token过期，重新获取token")
-                return self._get_access_token(self._corpid, self._corpsecret)
+            try:
+                token = token_dict[agentid]
+            except KeyError:
+                # 该agentid对应token不存在
+                self.logger.debug("token不存在，获取token")
+                return self._get_access_token(token_dict)
             else:
-                return old_token
+                now = time.time()
+                if now - TOKEN_PATH.stat().st_mtime >= 2 * 3600:
+                    self.logger.debug("token过期，重新获取token")
+                    return self._get_access_token(token_dict)
+                return token
 
-    def _get_access_token(self, corpid: str, corpsecret: str):
-        token_api = f'https://qyapi.weixin.qq.com/cgi-bin/gettoken?corpid={corpid}&corpsecret={corpsecret}'
+    def _get_access_token(self, token_dict: {}):
+        token_api = f'https://qyapi.weixin.qq.com/cgi-bin/gettoken?corpid={self._corpid}&corpsecret={self._corpsecret}'
         res = requests.get(token_api).json()
         if res.get('errcode') == 0:
             self.logger.info("token请求成功")
-            TOKEN_PATH.write_text(res.get('access_token'))
-            return res.get('access_token')
+            token = res.get('access_token')
+            token_dict.update({
+                self._agentid: token
+            })
+            TOKEN_PATH.write_text(json.dumps(token_dict))
+            return token
         else:
             raise TokenGetError(f"token请求失败，原因：{res.get('errmsg', 'None')}")
 
@@ -339,4 +373,3 @@ class AppMsgSender(MsgSender):
 
     def send_taskcard(self, *args, **kwargs):
         raise MethodNotImplementedError
-

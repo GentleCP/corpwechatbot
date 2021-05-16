@@ -28,10 +28,24 @@ class CorpWechatBot(MsgSender):
         super().__init__()
         self.__key = self._get_corpkeys(key=key).get('key', '')
         self._webhook = f'https://qyapi.weixin.qq.com/cgi-bin/webhook/send?key={self.__key}'
-        # self.__filehook = f"https://qyapi.weixin.qq.com/cgi-bin/webhook/upload_media?key={self.__key}&type=file"
         self.headers = {'Content-Type': 'application/json; charset=utf-8'}
         self.logger = LogHandler('CorpWechatBot')
         self._media_api = f'https://qyapi.weixin.qq.com/cgi-bin/webhook/upload_media?key={self.__key}&type=file'
+
+    def _get_corpkeys(self, key:str=''):
+        '''
+        get key from parameter or local
+        :param key:
+        :return:
+        '''
+        if key:
+            return {
+                'key': key
+            }
+        else:
+            return {
+                'key' : next(self._get_local_keys(section='chatbot', options=['key']))
+            }
 
 
     def send_text(self, content, mentioned_list=[], mentioned_mobile_list=[]):
