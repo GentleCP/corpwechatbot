@@ -13,10 +13,10 @@
 import time
 import requests
 import json
+import hashlib
 from typing import Optional
 from pathlib import Path
 from cptools import LogHandler
-from configparser import ConfigParser, NoSectionError, NoOptionError
 
 from corpwechatbot._sender import MsgSender
 from corpwechatbot.error import TokenGetError, MethodNotImplementedError
@@ -51,8 +51,9 @@ class AppMsgSender(MsgSender):
         self._corpid = corpkeys.get('corpid', '')
         self._corpsecret = corpkeys.get('corpsecret', '')
         self._agentid = corpkeys.get('agentid', '')
+        self._token_key = hashlib.sha1(bytes(self._corpid+self._agentid,encoding='utf-8')).hexdigest()
 
-        self.access_token = self.get_assess_token(self._agentid)
+        self.access_token = self.get_assess_token()
         self._webhook = f'https://qyapi.weixin.qq.com/cgi-bin/message/send?access_token={self.access_token}'
         self.logger = LogHandler('AppMsgSender')
 
@@ -78,10 +79,9 @@ class AppMsgSender(MsgSender):
                 res.update({k: v})
             return res
 
-    def get_assess_token(self, agentid: str = ''):
+    def get_assess_token(self):
         '''
-        通过企业id和应用凭证密钥获取assess_token，用于消息推送
-        :param agentid: 获取指定agentid的token
+        通过企业id和应用凭证密钥获取assess_token，用于消息推送，根据corpid和agentid识别不同的token
         '''
         try:
             token_dict = json.loads(TOKEN_PATH.read_text())
@@ -92,7 +92,7 @@ class AppMsgSender(MsgSender):
             return self._get_access_token(token_dict)
         else:
             try:
-                token = token_dict[agentid]
+                token = token_dict[self._token_key]
             except KeyError:
                 # 该agentid对应token不存在
                 self.logger.debug("token不存在，获取token")
@@ -111,7 +111,7 @@ class AppMsgSender(MsgSender):
             self.logger.info("token请求成功")
             token = res.get('access_token')
             token_dict.update({
-                self._agentid: token
+                self._token_key: token
             })
             TOKEN_PATH.write_text(json.dumps(token_dict))
             return token
@@ -373,3 +373,4 @@ class AppMsgSender(MsgSender):
 
     def send_taskcard(self, *args, **kwargs):
         raise MethodNotImplementedError
+
