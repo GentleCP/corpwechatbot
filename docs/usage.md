@@ -87,6 +87,19 @@ app.send_news(title='性感刘公，在线征婚',
 ```
 > ![img_6.png](../img/app_news.png)
 
+- **mpnews图文消息**
+```python
+app.send_mpnews(title='你好，我是CP',
+               image_path='data/test.png',
+               content='<a href="https://blog.gentlecp.com">Hello World</a>',
+               content_source_url='https://blog.gentlecp.com',
+               author='GentleCP',
+               digest='这是一段描述',
+               safe=1)
+```
+![](../img/mpnews-1.png)
+![img.png](../mpnews-2/img.png)
+
 - **卡片消息**：发送一张卡片，带有跳转链接
 ```python
 app.send_card(title='真骚哥出柜',
@@ -136,6 +149,7 @@ bot.send_news(title='性感刘公，在线征婚',
               picurl='https://gitee.com/gentlecp/ImgUrl/raw/master/20210313141425.jpg')
 ```
 > ![img_10.png](../img/bot_news.png)
+
 
 ## 企业微信本地配置文件
 默认情况下，在初始化推送实例的时候，都会要求传入相应的关键参数，但在程序中直接写这些敏感信息并不是一个好选项，因此新版本支持在本地用户目录(`~`)下创建一个`.corpwechatbot_key`文件，写入如下配置信息：
@@ -204,7 +218,7 @@ cwb -u='bot' -m='hello world'
     - `touser`: 要发送的用户，通过列表划分，输入成员ID，默认发送给全体
     - `toparty`: 要发送的部门，通过列表划分，输入部门ID，当touser为@all时忽略
     - `totag`: 发送给包含指定标签的人，通过列表划分，输入标签ID，当touser为@all时忽略
-    - `safe`(该参数并非所有接口都支持，使用时请确认): 是否是保密消息，`False`表示可对外分享，`True`表示不能分享且内容显示水印，默认为`False`
+    - `safe`(该参数并非所有接口都支持，使用时请确认): 是否是保密消息，`0`表示可对外分享，`1`表示不能分享且内容显示水印，默认为`0`
 
 ```python
 # 一个演示程序
