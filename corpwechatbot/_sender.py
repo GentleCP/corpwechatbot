@@ -120,6 +120,7 @@ class MsgSender(Sender):
             'fileerror': '文件不合法',
             'carderror': '卡片消息不合法',
             'mediaerror': 'media_id获取失败',
+            'mpnewserror': 'mp图文消息不合法'
         }
         self._media_api = ''
         self.key_cfg = ConfigParser()

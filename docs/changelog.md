@@ -1,4 +1,9 @@
 # ChangeLog
+## v0.4.0: 21/05/21
+- `feat`: 添加对`mpnews`类型消息的支持，关于该类型的解释参考[官网](https://work.weixin.qq.com/api/doc/90000/90135/90236#%E5%9B%BE%E6%96%87%E6%B6%88%E6%81%AF%EF%BC%88mpnews%EF%BC%89)
+- `feat`: 添加对参数`enable_id_trans`, `enable_duplicate_check`,`duplicate_check_interval`，现在你可以在发送消息的时候指定它们，具体参考官网
+- `refactor`: 更改参数`safe`为`int`，含义与官网等同，优化部分代码
+
 ## v0.3.1: 21/05/17
 - `fix`: 修复不同企业同一id应用的token存储冲突问题
 ## v0.3.0: 21/05/16

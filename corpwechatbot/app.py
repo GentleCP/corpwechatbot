@@ -130,7 +130,6 @@ class AppMsgSender(MsgSender):
     def _send_media(self,
                     media_path: str,
                     media_type: str,
-                    safe: Optional[bool] = False,
                     **kwargs):
         '''
         发送媒体文件统一发送模板
@@ -164,7 +163,7 @@ class AppMsgSender(MsgSender):
                     media_type: {
                         "media_id": media_id
                     },
-                    "safe": 1 if safe else 0,
+                    "safe": kwargs.get('safe', 0)
                 }
                 return self._post(data)
             else:
@@ -175,58 +174,51 @@ class AppMsgSender(MsgSender):
 
     def send_image(self,
                    image_path: str,
-                   safe: Optional[bool] = False,
                    **kwargs):
         '''
         发送图片，支持jpg、png、bmp
         :param image_path: 图片存储路径
-        :param safe:
         :return:
         '''
         return self._send_media(media_path=image_path,
                                 media_type='image',
-                                safe=safe,
                                 **kwargs)
 
     def send_voice(self,
                    voice_path: str,
-                   safe: Optional[bool] = False):
+                   **kwargs):
         '''
         发送语音，2MB，播放长度不超过60s，仅支持AMR格式
         :param voice_path:
-        :param safe:
         :return:
         '''
         return self._send_media(media_path=voice_path,
                                 media_type='voice',
-                                safe=safe)
+                                **kwargs)
 
     def send_video(self,
                    video_path: str,
-                   safe: Optional[bool] = False):
+                   **kwargs):
         '''
         发送视频
         :param video_path:
-        :param safe:
         :return:
         '''
         return self._send_media(media_path=video_path,
                                 media_type='video',
-                                safe=safe)
+                                **kwargs)
 
     def send_file(self,
                   file_path: str,
-                  safe: Optional[bool] = False,
                   **kwargs):
         '''
         发送文件
         :param file_path:
-        :param safe:
         :return:
         '''
         return self._send_media(media_path=file_path,
                                 media_type='file',
-                                safe=safe)
+                                **kwargs)
 
     def _send_content(self,
                       content_type: str,
@@ -249,12 +241,15 @@ class AppMsgSender(MsgSender):
             "totag": self._list2str(kwargs.get('totag', [])),
             "msgtype": content_type,
             "agentid": self._agentid,
+            "safe": kwargs.get('safe', 0),
+            "enable_id_trans": kwargs.get('enable_id_trans', 0),
+            "enable_duplicate_check": kwargs.get('enable_duplicate_check', 0),
+            "duplicate_check_interval": kwargs.get('duplicate_check_interval', 1800)
         })
         return self._post(data)
 
     def send_text(self,
                   content: str,
-                  safe: Optional = False,
                   **kwargs):
         '''
         发送text消息
@@ -274,7 +269,6 @@ class AppMsgSender(MsgSender):
                 "text": {
                     "content": content
                 },
-                "safe": 1 if safe else 0,
             }
             return self._send_content(content_type='text', data=data, **kwargs)
 
@@ -313,6 +307,51 @@ class AppMsgSender(MsgSender):
             }
             return self._send_content(content_type='news', data=data, **kwargs)
 
+    def send_mpnews(self,
+                    title: str,
+                    image_path: str,
+                    content: str,
+                    author: Optional[str],
+                    content_source_url: Optional[str],
+                    digest: Optional[str],
+                    **kwargs):
+        '''
+        发送mpnews消息
+        :param title: 图文标题
+        :param image_path: 缩略图所在路径
+        :param content: 图文消息内容
+        :param author: 作者信息
+        :param content_source_url: 点击跳转链接
+        :param digest: 图文消息描述
+        :param kwargs:
+        :return:
+        '''
+        if not (title and image_path and content):
+            self.logger.error(self.errmsgs['mpnewserror'])
+            return {
+                'errcode': 404,
+                'errmsg': self.errmsgs['mpnewserror']
+            }
+        else:
+            self._media_api = f'https://qyapi.weixin.qq.com/cgi-bin/media/upload?access_token={self.access_token}&type=image'
+            thumb_media_id = self._get_media_id_or_None(media_type='image',p_media=Path(image_path))
+            data = {
+                "mpnews": {
+                    "articles": [
+                        {
+                            "title": title,
+                            "thumb_media_id": thumb_media_id,
+                            "author": author,
+                            "content_source_url": content_source_url,
+                            "content": content,
+                            "digest": digest
+                        }
+                    ]
+                },
+            }
+            return self._send_content(content_type='mpnews', data=data, **kwargs)
+
+
     def send_markdown(self,
                       content: str,
                       **kwargs):
@@ -335,8 +374,6 @@ class AppMsgSender(MsgSender):
                 "markdown": {
                     "content": content,
                 },
-                "enable_duplicate_check": 0,
-                "duplicate_check_interval": 1800
             }
             return self._send_content(content_type='markdown', data=data, **kwargs)
 
@@ -373,4 +410,5 @@ class AppMsgSender(MsgSender):
 
     def send_taskcard(self, *args, **kwargs):
         raise MethodNotImplementedError
+
 
