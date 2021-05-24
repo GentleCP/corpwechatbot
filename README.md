@@ -175,7 +175,7 @@ pip install .
 
 [@GentleCP](https://github.com/GentleCP)
 
-## Contibutors
+## Contributors
 - [@GentleCP](https://github.com/GentleCP)
 
 ## License
