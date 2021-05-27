@@ -98,7 +98,7 @@ app.send_mpnews(title='你好，我是CP',
                safe=1)
 ```
 ![](../img/mpnews-1.png)
-![img.png](../mpnews-2/img.png)
+![](../img/mpnews-2.png)
 
 - **卡片消息**：发送一张卡片，带有跳转链接
 ```python
