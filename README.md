@@ -34,20 +34,19 @@
 </details>
 
 
+## ToC
 
+  * [QuickStart](#quickstart)
+  * [Features](#features)
+  * [Usage](#usage)
+  * [ChangeLog](#changelog)
+  * [Todo](#todo)
+     * [Finished](#finished)
+     * [Development Schedule](#development-schedule)
+  * [Author](#author)
+  * [Contributors](#contributors)
+  * [License](#license)
 
-ToC
------------------
-
-   * [corpwechat-bot](#corpwechat-bot)
-      * [QuickStart](#quickstart)
-      * [Features](#features)
-      * [Usage](#usage)
-      * [ChangeLog](#changelog)
-      * [Todo](#todo)
-      * [Author](#author)
-      * [Contibutors](#contibutors)
-      * [License](#license)
 
 ## QuickStart
 
@@ -157,7 +156,9 @@ pip install .
 
 ## Todo
 
-已更新与待更新的内容：
+### Finished
+
+> 已完成的开发任务，你可以在[ChangeLog](#ChangeLog)中查看更详细的完成情况
 
 - [x] `fix`：token存储位置修改，初始设置保存到本地`site-packages`（后期将其移到`site-packages/corpwechatbot`目录下，方便统一）
 - [x] `docs`：readme和usage更新
@@ -168,9 +169,18 @@ pip install .
 - [x] `fix`: 修复在指定标签和部门后依然默认发送给全体成员的问题
 - [x] `feat`: 支持多个第三方应用消息推送
 - [x] `feat`: 添加对`mpnews`的发送支持
-- [ ] `feat`: 添加任务卡片消息：允许用户点击做出相应反馈的卡片，需绑定回调函数，后续开发
-- [ ] `feat`: 添加小程序通知消息：应用需绑定小程序才可使用，暂无开发计划
 
+### Development Schedule
+
+> 排在前面的会优先考虑开发
+
+- [ ] `feat`: 添加回调配置功能，该功能用以支持更丰富的使用场景，如
+  - 用户发送消息给应用，识别关键词，返回不同的消息内容
+  - 用户点击应用菜单，转换为相应指令，执行自动化任务，接收任务卡片消息，根据卡片内容，用户可选择在移动端点击反馈
+  - 服务端（你的服务器）与移动端（你的微信&企业微信）实现更`amazing`的交互模式（💯如聊天机器人）
+- [ ] `docs`: 更简洁美观的文档阅读体验，结合`gitbook`
+
+- [ ] `feat`: 添加小程序通知消息：应用需绑定小程序才可使用，暂无开发计划
 
 ## Author
 
