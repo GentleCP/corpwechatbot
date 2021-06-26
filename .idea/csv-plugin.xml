@@ -17,6 +17,13 @@
             </Attribute>
           </value>
         </entry>
+        <entry key="/corpwechatbot/Sample.py">
+          <value>
+            <Attribute>
+              <option name="separator" value=":" />
+            </Attribute>
+          </value>
+        </entry>
         <entry key="/corpwechatbot/__init__.py">
           <value>
             <Attribute>
@@ -45,6 +52,13 @@
             </Attribute>
           </value>
         </entry>
+        <entry key="/corpwechatbot/client.py">
+          <value>
+            <Attribute>
+              <option name="separator" value=":" />
+            </Attribute>
+          </value>
+        </entry>
         <entry key="/corpwechatbot/command.py">
           <value>
             <Attribute>
@@ -52,7 +66,21 @@
             </Attribute>
           </value>
         </entry>
+        <entry key="/corpwechatbot/server.py">
+          <value>
+            <Attribute>
+              <option name="separator" value=":" />
+            </Attribute>
+          </value>
+        </entry>
         <entry key="/corpwechatbot/util.py">
+          <value>
+            <Attribute>
+              <option name="separator" value=":" />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="/corpwechatbot/web.py">
           <value>
             <Attribute>
               <option name="separator" value=":" />
