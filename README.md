@@ -16,7 +16,6 @@
 
 <details>
 <summary><b>为什么要使用corpwechat-bot?</b></summary>
-
 `corpwechat-bot`的定位是让用户随时随地了解服务器端程序的运行结果，同类型的方法有很多，例如邮件，钉钉（这两个的消息推送我在我的另一个库[cptools](https://github.com/GentleCP/cptools)中实现了，有兴趣的可以去看看），bark等。但对于一般人来说，最方便的接收方式还是微信，但个人微信并不提供给开发者API（以前可以用网页微信，现在被禁了）。
 
 拥有同样功能比较知名的有：`ServerChan`，之前提供公众号模板消息推送，但由于微信官方原因，在`21年4月底即将下线`，因此推出了`Turbo`版，支持企业微信消息推送。我在使用过之后发现几个主要问题:raising_hand:，并与`corpwechat-bot`进行了对比：
@@ -29,7 +28,7 @@
 | **消息类型支持**     | :pensive: 仅支持`title`+`description`（支持`markdown`）的消息发送格式​ | :yum: 支持文本、`markdown`，图片、语音、视频、文件、卡片等多个企业微信提供的消息类型​ |
 | **开源**             | :cry: ​不开源，所有代码均由`ServerChan`自身管控               | :sunglasses: 开源在Github​，任何人可以依据源代码添加定制自己想要的功能，或贡献自己的一份力到开源项目中 |
 
-> **特别说明**：虽然上面的对比偏向于突出`corpwechat-bot`的优势，但并没有刻意贬低`ServerChan`的意思，作为一个公开的服务，`ServerChan`的这些特性都是可以被接受的，同时`ServerChan`也是一款**非常优秀**的消息推送工具（我之前一直在使用），支持各大类型的消息推送接口（企业微信、钉钉、bark等等），但考虑到上面的几个特性，所以我选择了自己定制并开源了`corpwechat-bot`，希望给和我一样想法的用户**多一份选择**，如果你觉得上面的特性切中了你的需求点，**麻烦给作者一个小小的`star`以资鼓励吧**～:pray:。未来`corpwechat-bot`还会添加更多的功能和特性，详情查看[Todo](#todo)，当然你也可以在`issue`中提出你的合理需求，或提交PR来帮助`corpwechat-bot`做的更好!!!
+> **特别说明**：虽然上面的对比偏向于突出`corpwechat-bot`的优势，但并没有刻意贬低`ServerChan`的意思，作为一个公开的服务，`ServerChan`的这些特性都是可以被接受的，同时`ServerChan`也是一款**非常优秀**的消息推送工具（我之前一直在使用），支持各大类型的消息推送接口（企业微信、钉钉、bark等等），但考虑到上面的几个特性，所以我选择了自己定制并开源了`corpwechat-bot`，希望给和我一样想法的用户**多一份选择**，未来`corpwechat-bot`还会添加更多的功能和特性，详情查看[Todo](#todo)，当然你也可以在`issue`中提出你的合理需求，或提交PR来帮助`corpwechat-bot`做的更好!!!
 
 </details>
 
@@ -47,69 +46,13 @@
   * [Contributors](#contributors)
   * [License](#license)
 
-
 ## QuickStart
 
-> **注意**，本项目依赖于企业微信创建群聊机器人或应用，要想实现需要先注册一个属于你自己的企业微信号（个人免费），这十分简便，参照[官方网址](https://work.weixin.qq.com/) 即可
-
-当你有了企业微信后，你还需要做一些配置，根据你自身的需求来做选择：
-
-- **应用消息推送** ：应用消息推送需要在企业微信中创建一个第三方应用，[参照教程](https://open.work.weixin.qq.com/wwopen/helpguide/detail?t=selfBuildApp)
-- **群聊机器人消息推送**：群聊机器人消息推送需要在你已有的企业群中添加一个机器人，然后获取相应的机器人`key`（`webhook`最后面），[参照教程](https://jingyan.baidu.com/article/d45ad148cc79eb28552b80b5.html)
-
-当确定你的配置可用后（企业微信后台尝试发送消息看手机上能否接收到），安装`corpwechatbot`到你的pc中，只需要一条命令：
-
-```shell
-pip install -U corpwechatbot
-```
-
-下面进行消息推送：
-
-- **应用消息推送**：发送一条文本消息到你设置的应用，在手机个人微信上查看接收
-
-```python
-from corpwechatbot.app import AppMsgSender
-
-app = AppMsgSender(corpid='',  # 你的企业id
-                   corpsecret='',  # 你的应用凭证密钥
-                   agentid='')   # 你的应用id
-app.send_text(content="如果我是DJ，你会爱我吗？")
-```
-推送结果
-
-![img.png](img/app.png)
-
-- **动图演示**
-
-![](img/app_msgsend.gif)
-
-- **群聊机器人消息推送**：发送一条文本消息到你设置了机器人的群聊
-
-```python
-from corpwechatbot.chatbot import CorpWechatBot
-
-bot = CorpWechatBot(key='')  # 你的机器人key，通过群聊添加机器人获取
-
-bot.send_text(content='Hello World')
-```
-
-推送结果：
-
-![](img/bot.png)
-
-- **动图演示**
-
-![](img/bot_msgsend.gif)
-
-- **应用交互**（开发测试版）：通过回调，你可以给你的用户发送指令，让其执行，解决了应用只能单方面给用户发送消息，而不能回复的困境
-
-![](img/callback_test.gif)
-
-如果你想要更多的使用技巧，请查看**Usage**
-
+[QuickStart](docs/quickstart.md)能够让你在最快的时间内上手`corpwechatbot`，跳过较为繁杂的参数步骤，但如果你希望能更好地使用`corpwechatbot`，请查看**Usage**
 
 ## Features
-目前实现了两种推送消息方式，**应用消息推送**和**群聊机器人消息推送**，并且在此基础上，添加了终端一条命令式上述两种消息的推送，具体如下：
+
+目前实现了两种推送消息方式和，**应用消息推送**、**群聊机器人消息推送**和**应用交互**（开发测试版），并且在此基础上，添加了**终端一条命令式**上述两种消息的推送，具体如下：
 
 <details>
 <summary><b>应用消息推送</b>: 该推送会直接传至你的个人微信上，你会像收到好友消息一样收到通知信息，不需要安装企业微信</summary>
@@ -137,9 +80,10 @@ bot.send_text(content='Hello World')
 <li>具体参考<b>Usage</b></li>
 </details>
 
-- 新增回调配置功能
+- 新增回调配置功能：具体查看**Usage**
 
 ## Usage
+
 > ⚠️ 当第一种安装方式失效时，请尝试第二种
 
 - 安装
@@ -193,8 +137,6 @@ pip install .
 
 ## License
 本项目遵守[GPL v3](LICENSE)开源协议
-
-
 
 ## Sponsor
 
