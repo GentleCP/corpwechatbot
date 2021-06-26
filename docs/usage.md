@@ -276,21 +276,21 @@ bot.send_text(content='Hello World',
 - 要求
   - 一台有独立ip的服务器
   - 简单的`fastapi`用法  
-  
 
 1. 在企业微信后台进入应用管理，选择一个应用，找到接收消息
 ![](https://cdn.jsdelivr.net/gh/GentleCP/ImgUrl/20210626140957.png)
 
 2. 设置API接收消息的三个选项，如下
-![](https://cdn.jsdelivr.net/gh/GentleCP/ImgUrl/20210626141701.png)
-   
+  ![](https://cdn.jsdelivr.net/gh/GentleCP/ImgUrl/20210626141701.png)
+  
 3. 在你的服务器上运行如下`corpwechatbot.web`代码（需要`fastapi`，自行安装）
 > ⚠️该部分暂时没有加入`corpwechatbot`包，请`clone`仓库代码使用
 
 ```shell
 python3 web.py -p=8000 -t="token" -a="aeskey" -c="corpid"
 ```
-确认你的web服务成功启动，并能通过公网访问
+确认你的web服务成功启动，并能通过公网访问  
+
 4.点击保存，如果正常，会提示API设置成功，记住这些配置信息
 ![](https://cdn.jsdelivr.net/gh/GentleCP/ImgUrl/20210626143027.png)
 
@@ -300,6 +300,7 @@ python3 web.py -p=8000 -t="token" -a="aeskey" -c="corpid"
 ![](../img/callback_test.gif)
 
 ## 问题反馈
+
 如果你未能收到相应的推送结果，请确认如下步骤：
 1. 企业微信配置是否正确：包括企业id，应用密钥、应用id，机器人`key`等
 2. 是否采用了最新版本的`corpwechatbot`（通常来说只要企业微信的接口不变，就不会有问题）
