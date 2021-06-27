@@ -87,6 +87,13 @@
             </Attribute>
           </value>
         </entry>
+        <entry key="/docs/quickstart.md">
+          <value>
+            <Attribute>
+              <option name="separator" value=":" />
+            </Attribute>
+          </value>
+        </entry>
         <entry key="/docs/usage.md">
           <value>
             <Attribute>

@@ -1,5 +1,5 @@
 
-
+## 预先配置工作
 本项目依赖于企业微信创建群聊机器人或应用，要想实现需要先注册一个属于你自己的企业微信号（个人免费），这十分简便，参照[官方网址](https://work.weixin.qq.com/) 即可。
 
 当你有了企业微信后，你还需要做一些配置，根据你自身的需求来做选择：
@@ -15,7 +15,8 @@ pip install -U corpwechatbot
 
 下面进行消息推送：
 
-- **应用消息推送**：发送一条文本消息到你设置的应用，在手机个人微信上查看接收
+## 应用消息推送
+> 发送一条文本消息到你设置的应用，在手机个人微信上查看接收
 
 ```python
 from corpwechatbot.app import AppMsgSender
@@ -34,7 +35,8 @@ app.send_text(content="如果我是DJ，你会爱我吗？")
 
 ![](../img/app_msgsend.gif)
 
-- **群聊机器人消息推送**：发送一条文本消息到你设置了机器人的群聊
+## 群聊机器人消息推送
+> 发送一条文本消息到你设置了机器人的群聊
 
 ```python
 from corpwechatbot.chatbot import CorpWechatBot
@@ -52,10 +54,15 @@ bot.send_text(content='Hello World')
 
 ![](../img/bot_msgsend.gif)
 
-- **应用交互**（开发测试版）：通过回调，你可以给你的用户发送指令，让其执行，解决了应用只能单方面给用户发送消息，而不能回复的困境
+## 应用交互（开发测试版）
+> 通过回调，你可以给你的用户发送指令，让其执行，解决了应用只能单方面给用户发送消息，而不能回复的困境
+
 - **动图演示**
 
 ![](../img/callback_test.gif)
 
+- **基于回调的任务卡片演示**
+![](../img/taskcard_example.gif)
+  
 详细内容查看**Usage**
 

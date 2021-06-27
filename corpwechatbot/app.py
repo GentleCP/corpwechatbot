@@ -17,6 +17,7 @@ import hashlib
 from typing import Optional
 from pathlib import Path
 from cptools import LogHandler
+from typing import List, Dict
 
 from corpwechatbot._sender import MsgSender
 from corpwechatbot.error import TokenGetError, MethodNotImplementedError
@@ -51,7 +52,7 @@ class AppMsgSender(MsgSender):
         self._corpid = corpkeys.get('corpid', '')
         self._corpsecret = corpkeys.get('corpsecret', '')
         self._agentid = corpkeys.get('agentid', '')
-        self._token_key = hashlib.sha1(bytes(self._corpid+self._agentid,encoding='utf-8')).hexdigest()
+        self._token_key = hashlib.sha1(bytes(self._corpid + self._agentid, encoding='utf-8')).hexdigest()
 
         self.access_token = self.get_assess_token()
         self._webhook = f'https://qyapi.weixin.qq.com/cgi-bin/message/send?access_token={self.access_token}'
@@ -334,7 +335,7 @@ class AppMsgSender(MsgSender):
             }
         else:
             self._media_api = f'https://qyapi.weixin.qq.com/cgi-bin/media/upload?access_token={self.access_token}&type=image'
-            thumb_media_id = self._get_media_id_or_None(media_type='image',p_media=Path(image_path))
+            thumb_media_id = self._get_media_id_or_None(media_type='image', p_media=Path(image_path))
             data = {
                 "mpnews": {
                     "articles": [
@@ -350,7 +351,6 @@ class AppMsgSender(MsgSender):
                 },
             }
             return self._send_content(content_type='mpnews', data=data, **kwargs)
-
 
     def send_markdown(self,
                       content: str,
@@ -408,7 +408,60 @@ class AppMsgSender(MsgSender):
             }
             return self._send_content(content_type='textcard', data=data, **kwargs)
 
-    def send_taskcard(self, *args, **kwargs):
-        raise MethodNotImplementedError
-
+    def send_taskcard(self,
+                      title: str,
+                      desp: Optional[str],
+                      url: str,
+                      task_id: str,
+                      btn: List[Dict],
+                      **kwargs):
+        '''
+        发送任务发片消息
+        :param title: 标题，不超过128个字节，超过会自动截断（支持id转译）
+        :param desp: 描述，不超过512个字节，超过会自动截断（支持id转译）
+        :param url: 点击后跳转的链接。最长2048字节，请确保包含了协议头(http/https)，需要先自行配置回调服务
+        :param task_id: 任务id，同一个应用发送的任务卡片消息的任务id不能重复，只能由数字、字母和“_-@”组成，最长支持128字节
+        :param btn: 按钮列表，按钮个数为1~2个，btn的例子如下，各个具体参数的含义参考：https://open.work.weixin.qq.com/api/doc/90000/90135/90236#%E4%BB%BB%E5%8A%A1%E5%8D%A1%E7%89%87%E6%B6%88%E6%81%AF
+        "btn":[
+            {
+                "key": "key111",
+                "name": "批准",
+                "color":"red",
+                "is_bold": true
+            },
+            {
+                "key": "key222",
+                "name": "驳回"
+            }
+        ]
+        :param kwargs: 其他的通用参数，在此统一处理
+        -------接收方的数据----
+        {
+           'ToUserName': 企业号,
+           'FromUserName': 发送消息的用户名
+           'MsgType': 'event',
+           'CreateTime': '1624762869',
+           'EventKey': 事件key，服务端根据key值确定用户点击的情况
+           'TaskId': 任务id，这个必须是唯一的，在同一应用中发过之后不能重复(建议通过时间戳hash结合的方式生成)
+           'Agentid': 应用id
+        }
+        :return:
+        '''
+        if not (title and task_id and btn):
+            self.logger.error(self.errmsgs['taskcarderror'])
+            return {
+                'errcode': 404,
+                'errmsg': self.errmsgs['taskcarderror']
+            }
+        else:
+            data = {
+                "interactive_taskcard": {
+                    "title": title,
+                    "description": desp,
+                    "url": url,
+                    "task_id": task_id,
+                    "btn": btn,
+                },
+            }
+            return self._send_content(content_type='interactive_taskcard', data=data, **kwargs)
 

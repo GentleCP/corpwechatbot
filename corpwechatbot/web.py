@@ -18,7 +18,17 @@ import uvicorn
 
 app = FastAPI()
 
+def parse_args():
+    arg_parser = argparse.ArgumentParser()
+    arg_parser.add_argument('--port', '-p', default=8000, type=int, help="port to build web server")
+    arg_parser.add_argument('--token', '-t', type=str, help='token set in corpwechat app')
+    arg_parser.add_argument('--aeskey', '-a', type=str, help='encoding aeskey')
+    arg_parser.add_argument('--corpid', '-c', type=str, help='your corpwechat id')
+    args = arg_parser.parse_args()
+    return args
 
+args = parse_args()
+wxcpt = WXBizMsgCrypt(args.token, args.aeskey, args.corpid)
 
 @app.get("/")
 async def verify(msg_signature: str,
@@ -59,31 +69,44 @@ async def recv(msg_signature: str,
         decrypt_data[node.tag] = node.text
     # 解析后得到的decrypt_data: {"ToUserName":"企业号", "FromUserName":"发送者用户名", "CreateTime":"发送时间", "Content":"用户发送的内容", "MsgId":"唯一id，需要针对此id做出响应", "AagentID": "应用id"}
     # 用户应根据Content的内容自定义要做出的行为，包括响应返回数据，如下例子，如果发送的是123，就返回hello world
-    if '帅哥是谁' in decrypt_data['Content']:
-        # 返回信息
-        sRespData = "<xml><ToUserName>{to_username}</ToUserName><FromUserName>{from_username}</FromUserName><CreateTime>{create_time}</CreateTime><MsgType>text</MsgType><Content>{content}</Content><MsgId>{msgid}</MsgId><AgentID>{agentid}</AgentID></xml>".format(
-            to_username=decrypt_data['ToUserName'],
-            from_username=decrypt_data['FromUserName'],
-            create_time=decrypt_data['CreateTime'],
-            content='当然是您啦！',
-            msgid=decrypt_data['MsgId'],
-            agentid=decrypt_data['AgentID'])
-        ret, send_msg = wxcpt.EncryptMsg(sReplyMsg=sRespData, sNonce=nonce)
-        if ret == 0:
-            return Response(content=send_msg)
-        else:
-            print(send_msg)
 
-def main():
-    arg_parser = argparse.ArgumentParser()
-    arg_parser.add_argument('--port', '-p', default=8000, type=int, help="port to build web server")
-    arg_parser.add_argument('--token', '-t', type=str, help='token set in corpwechat app')
-    arg_parser.add_argument('--aeskey', '-a', type=str, help='encoding aeskey')
-    arg_parser.add_argument('--corpid', '-c', type=str, help='your corpwechat id')
-    args = arg_parser.parse_args()
-    global wxcpt
-    wxcpt = WXBizMsgCrypt(args.token, args.aeskey, args.corpid)
-    uvicorn.run("web:app", port=args.port, host='0.0.0.0', reload=False)
+    # 处理任务卡片消息
+    if decrypt_data.get('EventKey', '') == 'no':
+        # 返回信息
+        sRespData="""<xml>
+   <ToUserName>{to_username}</ToUserName>
+   <FromUserName>{from_username}</FromUserName>
+   <CreateTime>{create_time}</CreateTime>
+   <MsgType>update_taskcard</MsgType>
+   <TaskCard>
+       <ReplaceName>已处理</ReplaceName>
+   </TaskCard>
+</xml>
+""".format(to_username=decrypt_data['ToUserName'],
+           from_username=decrypt_data['FromUserName'],
+           create_time=decrypt_data['CreateTime'],
+           event_key=decrypt_data['EventKey'],
+           agentid=decrypt_data['AgentId'])
+    # 处理文本消息
+    if decrypt_data.get('Content', '') == '我帅吗':
+        sRespData = """<xml>
+   <ToUserName>{to_username}</ToUserName>
+   <FromUserName>{from_username}</FromUserName> 
+   <CreateTime>{create_time}</CreateTime>
+   <MsgType>text</MsgType>
+   <Content>{content}</Content>
+</xml>
+""".format(to_username=decrypt_data['ToUserName'],
+           from_username=decrypt_data['FromUserName'],
+           create_time=decrypt_data['CreateTime'],
+           content="帅得一逼",)
+    ret, send_msg = wxcpt.EncryptMsg(sReplyMsg=sRespData, sNonce=nonce)
+    if ret == 0:
+        return Response(content=send_msg)
+    else:
+        print(send_msg)
+
+
 
 if __name__ == "__main__":
-    main()
+    uvicorn.run("web:app", port=args.port, host='0.0.0.0', reload=False)

@@ -112,6 +112,27 @@ app.send_card(title='真骚哥出柜',
 ```
 > ![img_7.png](../img/app_card.png)
 
+- **任务卡片消息**
+> 在发送应用卡片消息之前，请确保你已做好相应的[回调配置](#回调配置)
+```python
+btn = [{
+  "key": "yes",
+  "name": "好的",
+  "color":"red",
+  "is_bold": True,
+},
+  {
+    "key": "no",
+    "name": "wdnmd"
+  }
+]
+app.send_taskcard(title="老板的消息",
+                  desp="下个月工资减半",
+                  url="http://127.0.0.1",
+                  btn=btn,
+                  task_id='12323',) # task_id在应用中是唯一的
+```
+![](../img/taskcard_example.gif)
 
 ## 群聊机器人消息推送
 > ⚠️注意！机器人发送的群聊只能在企业微信群聊中收到（个人微信中不会显示）！！！
@@ -152,6 +173,7 @@ bot.send_news(title='性感刘公，在线征婚',
               picurl='https://gitee.com/gentlecp/ImgUrl/raw/master/20210313141425.jpg')
 ```
 > ![img_10.png](../img/bot_news.png)
+
 
 
 ## 企业微信本地配置文件
