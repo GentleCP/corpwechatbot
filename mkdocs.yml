@@ -1,0 +1,68 @@
+site_name: corpwechat-bot： 企业微信消息推送助手
+site_description: 帮助你用一行代码实现从服务端到移动端的消息推送和回调
+site_url: 
+site_author: GentleCP
+repo_name: corpwechat-bot
+repo_url: https://github.com/GentleCP/corpwechat-bot
+
+theme:
+  name: material
+  palette:
+    primary: 'Blue Grey'
+    accent: 'Pink'
+  features:
+    # tabs: true
+    # - navigation.tabs.sticky
+  language: 'zh'
+  
+extra:
+  search:
+    language: 'jp'
+
+markdown_extensions:
+  - admonition
+  - codehilite:
+      guess_lang: false
+      linenums: false
+  - toc:
+      permalink: true
+  - footnotes
+  - meta
+  - def_list
+  - pymdownx.arithmatex
+  # - pymdownx.betterem:
+  #     smart_enable: all
+  - pymdownx.caret
+  - pymdownx.critic
+  - pymdownx.details
+  - pymdownx.emoji:
+      emoji_generator: !!python/name:pymdownx.emoji.to_png
+  - pymdownx.inlinehilite
+  - pymdownx.magiclink
+  - pymdownx.mark
+  - pymdownx.smartsymbols
+  - pymdownx.superfences
+  - pymdownx.tasklist
+  - pymdownx.tilde
+
+
+extra_javascript:
+  - 'js/extra.js'
+  # - 'js/baidu-tongji.js'
+  - 'https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-MML-AM_CHTML'
+
+# nav:
+#   - 介绍: index.md
+#   - Tricks: tricks/index.md
+#       - 1.高级用法: tricks/advanced-usage.md
+    # - 1. 高级用法: tricks/advanced-usage.md
+    # - 2. 一句话trick: tricks/one-line-trick.md
+    # - 3. 标准模块: tricks/standard-module.md
+    # - 4. pycharm使用trick: tricks/pycharm-usage.md
+  # - 三. Design: design/index.md
+  #     - 1. 设计模式: design/patterns.md
+  #     - 2. 魔法方法: design/magic-method.md
+  # - 四. Quick-Start: quick-start/index.md
+      # - quick-start/py2neo.md
+      # - quick-start/scrapy.md
+
