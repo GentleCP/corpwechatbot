@@ -282,7 +282,7 @@ app.send_text(content='Hello',
               touser=['sb'],
               toparty=['1'],
               totag=['1'],
-              safe=True)
+              safe=1)
 ```
 > ⚠️注意！在指定`toparty`参数的时候，请确保你应用的可见范围包括该部门，否则会发送失败！
 ![](https://cdn.jsdelivr.net/gh/GentleCP/ImgUrl/20210507185234.png)
@@ -306,15 +306,20 @@ bot.send_text(content='Hello World',
 ```
 > ![img_11.png](img/bot_at.png)
 
-获取相应数据方法（进入企业微信后台->通讯录）：
-- 如何获取userID  
-![img_12.png](img/get_userid.png)
-- 如何获取partyID  
-![img_13.png](img/get_partyid.png)
+### 获取相关用户数据方法
+
+进入企业微信后台->通讯录
+
+- 如何获取userID 
+
+![](img/get_userid.png)
+
+- 如何获取partyID    
+  ![img_13.png](img/get_partyid.png)
 - 如何获取tagID  
-![img_14.png](img/get_tagid.png)
+  ![img_14.png](img/get_tagid.png)
 - 如何获取mobile  
-![img_15.png](img/get_mobile.png)
+  ![img_15.png](img/get_mobile.png)
 
 ## 回调配置
 
