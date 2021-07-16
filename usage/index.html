@@ -13,6 +13,8 @@
         <meta name="author" content="GentleCP">
       
       
+        <link rel="canonical" href="https://gentlecp.github.io/corpwechat-bot/usage/">
+      
       <link rel="shortcut icon" href="../assets/images/favicon.png">
       <meta name="generator" content="mkdocs-1.1.2, mkdocs-material-6.2.4">
     
@@ -79,7 +81,7 @@
 
 <header class="md-header" data-md-component="header">
   <nav class="md-header-nav md-grid" aria-label="Header">
-    <a href=".." title="corpwechat-bot： 企业微信消息推送助手" class="md-header-nav__button md-logo" aria-label="corpwechat-bot： 企业微信消息推送助手">
+    <a href="https://gentlecp.github.io/corpwechat-bot/" title="corpwechat-bot： 企业微信消息推送助手" class="md-header-nav__button md-logo" aria-label="corpwechat-bot： 企业微信消息推送助手">
       
   
   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 003-3 3 3 0 00-3-3 3 3 0 00-3 3 3 3 0 003 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54z"/></svg>
@@ -172,7 +174,7 @@
 
 <nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
   <label class="md-nav__title" for="__drawer">
-    <a href=".." title="corpwechat-bot： 企业微信消息推送助手" class="md-nav__button md-logo" aria-label="corpwechat-bot： 企业微信消息推送助手">
+    <a href="https://gentlecp.github.io/corpwechat-bot/" title="corpwechat-bot： 企业微信消息推送助手" class="md-nav__button md-logo" aria-label="corpwechat-bot： 企业微信消息推送助手">
       
   
   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 003-3 3 3 0 00-3-3 3 3 0 00-3 3 3 3 0 003 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54z"/></svg>
@@ -465,20 +467,27 @@
   
 </li>
         
+          <li class="md-nav__item">
+  <a href="#_21" class="md-nav__link">
+    获取相关用户数据方法
+  </a>
+  
+</li>
+        
       </ul>
     </nav>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#_21" class="md-nav__link">
+  <a href="#_22" class="md-nav__link">
     回调配置
   </a>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#_22" class="md-nav__link">
+  <a href="#_23" class="md-nav__link">
     问题反馈
   </a>
   
@@ -695,20 +704,27 @@
   
 </li>
         
+          <li class="md-nav__item">
+  <a href="#_21" class="md-nav__link">
+    获取相关用户数据方法
+  </a>
+  
+</li>
+        
       </ul>
     </nav>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#_21" class="md-nav__link">
+  <a href="#_22" class="md-nav__link">
     回调配置
   </a>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#_22" class="md-nav__link">
+  <a href="#_23" class="md-nav__link">
     问题反馈
   </a>
   
@@ -980,7 +996,7 @@
               <span class="n">touser</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;sb&#39;</span><span class="p">],</span>
               <span class="n">toparty</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;1&#39;</span><span class="p">],</span>
               <span class="n">totag</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;1&#39;</span><span class="p">],</span>
-              <span class="n">safe</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+              <span class="n">safe</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
 </code></pre></div>
 
 <blockquote>
@@ -1005,16 +1021,21 @@
 <blockquote>
 <p><img alt="img_11.png" src="../img/bot_at.png" /></p>
 </blockquote>
-<p>获取相应数据方法（进入企业微信后台-&gt;通讯录）：
-- 如何获取userID<br />
-<img alt="img_12.png" src="../img/get_userid.png" />
-- 如何获取partyID<br />
-<img alt="img_13.png" src="../img/get_partyid.png" />
-- 如何获取tagID<br />
-<img alt="img_14.png" src="../img/get_tagid.png" />
-- 如何获取mobile<br />
-<img alt="img_15.png" src="../img/get_mobile.png" /></p>
-<h2 id="_21">回调配置<a class="headerlink" href="#_21" title="Permanent link">&para;</a></h2>
+<h3 id="_21">获取相关用户数据方法<a class="headerlink" href="#_21" title="Permanent link">&para;</a></h3>
+<p>进入企业微信后台-&gt;通讯录</p>
+<ul>
+<li>如何获取userID </li>
+</ul>
+<p><img alt="" src="../img/get_userid.png" /></p>
+<ul>
+<li>如何获取partyID  <br />
+<img alt="img_13.png" src="../img/get_partyid.png" /></li>
+<li>如何获取tagID<br />
+<img alt="img_14.png" src="../img/get_tagid.png" /></li>
+<li>如何获取mobile<br />
+<img alt="img_15.png" src="../img/get_mobile.png" /></li>
+</ul>
+<h2 id="_22">回调配置<a class="headerlink" href="#_22" title="Permanent link">&para;</a></h2>
 <blockquote>
 <p>本部分主要讲解如何配置企业微信的回调机制，主要参考<a href="https://open.work.weixin.qq.com/api/doc/90000/90135/90930">官方回调配置</a> 和<a href="https://github.com/sbzhu/weworkapi_python">官方接口代码</a></p>
 </blockquote>
@@ -1050,7 +1071,7 @@
 <p>至此，你的服务器已经具备基本的请求和响应功能了，由于post的请求根据用户的需求各异，目前只是完成了一个简单的发送和响应功能，后续有时间再完善。</p>
 <p>下面是请求响应的例子：
 <img alt="" src="../img/callback_test.gif" /></p>
-<h2 id="_22">问题反馈<a class="headerlink" href="#_22" title="Permanent link">&para;</a></h2>
+<h2 id="_23">问题反馈<a class="headerlink" href="#_23" title="Permanent link">&para;</a></h2>
 <p>如果你未能收到相应的推送结果，请确认如下步骤：</p>
 <ul>
 <li>
