@@ -5,7 +5,7 @@
             Name: app.py
             Description: 企业微信应用消息推送
             Author: GentleCP
-            Email: 574881148@qq.com
+            Email: me@gentlecp.com
             WebSite: https://blog.gentlecp.com
             Create Date: 2021/4/7
 -----------------End-----------------------------
@@ -25,12 +25,6 @@ from corpwechatbot.util import is_image, is_voice, is_video, is_file
 
 CUR_PATH = Path(__file__)
 TOKEN_PATH = CUR_PATH.parent.joinpath('token.json')  # 存储在本项目根目录下
-
-
-class KeyNotFound(Exception):
-
-    def __str__(self):
-        return f'Can not find file `{str(Path.home())}/.corpwechatbot_key`'
 
 
 class AppMsgSender(MsgSender):
@@ -55,7 +49,9 @@ class AppMsgSender(MsgSender):
         self._token_key = hashlib.sha1(bytes(self._corpid + self._agentid, encoding='utf-8')).hexdigest()
 
         self.access_token = self.get_assess_token()
-        self._webhook = f'https://qyapi.weixin.qq.com/cgi-bin/message/send?access_token={self.access_token}'
+        self._web_interface = 'https://qyapi.weixin.qq.com/cgi-bin/message/send?access_token={}'
+        self._media_interface = 'https://qyapi.weixin.qq.com/cgi-bin/media/upload?access_token={}&type={}'
+        self._webhook = self._web_interface.format(self.access_token)
         self.logger = LogHandler('AppMsgSender')
 
     def _get_corpkeys(self, corpid: str = '', corpsecret: str = '', agentid: str = ''):
@@ -90,22 +86,22 @@ class AppMsgSender(MsgSender):
             # 尚未获取过token
             self.logger.debug('旧token获取失败，重新获取token')
             token_dict = {}
-            return self._get_access_token(token_dict)
+            return self.__get_access_token(token_dict)
         else:
             try:
                 token = token_dict[self._token_key]
             except KeyError:
                 # 该agentid对应token不存在
                 self.logger.debug("token不存在，获取token")
-                return self._get_access_token(token_dict)
+                return self.__get_access_token(token_dict)
             else:
                 now = time.time()
                 if now - TOKEN_PATH.stat().st_mtime >= 2 * 3600:
                     self.logger.debug("token过期，重新获取token")
-                    return self._get_access_token(token_dict)
+                    return self.__get_access_token(token_dict)
                 return token
 
-    def _get_access_token(self, token_dict: {}):
+    def __get_access_token(self, token_dict={}):
         token_api = f'https://qyapi.weixin.qq.com/cgi-bin/gettoken?corpid={self._corpid}&corpsecret={self._corpsecret}'
         res = requests.get(token_api).json()
         if res.get('errcode') == 0:
@@ -119,7 +115,7 @@ class AppMsgSender(MsgSender):
         else:
             raise TokenGetError(f"token请求失败，原因：{res.get('errmsg', 'None')}")
 
-    def _list2str(self, datas: []):
+    def __list2str(self, datas: []):
         '''
         将传入的list数据转换成 | 划分的字符串
         e.g. ['user1', 'user2'] -> 'user1|user2'
@@ -128,50 +124,90 @@ class AppMsgSender(MsgSender):
         '''
         return "".join([item + '|' for item in datas])[:-1]
 
-    def _send_media(self,
-                    media_path: str,
-                    media_type: str,
-                    **kwargs):
+    def __send_res_check(self, send_res, data):
         '''
-        发送媒体文件统一发送模板
-        :param media_path:
-        :param media_type: 媒体类型，目前包括image, voice, video, file
-        :param safe:
-        :param kwargs: touser, toparty, totag
-        :return:
+        检查消息推送的结果，若token失效，则重新获取并再次发送消息
+        :param send_res:
+        :param data:
+        :return: send_res
         '''
-        is_func = globals().get('is_' + media_type)  # 根据media类型，自动定位检测函数
-        if not is_func(media_path):
-            self.logger.error(self.errmsgs[f'{media_type}error'])
-            return {
-                'errcode': 404,
-                'errmsg': self.errmsgs[f'{media_type}error']
-            }
+        if send_res.get('errcode') == 0:
+            return send_res
+        elif send_res.get('errcode') == 40014:
+            # invalid access token, refresh token
+            self.logger.info("尝试重新获取token并发送消息")
+            self.access_token = self.__get_access_token()  # 运行时长超过token周期导致token更新，无需访问本地token
+            self._webhook = self._web_interface.format(self.access_token)
+            return self._post(data)
         else:
-            # send media
-            self._media_api = f'https://qyapi.weixin.qq.com/cgi-bin/media/upload?access_token={self.access_token}&type={media_type}'
-            media_id = self._get_media_id_or_None(media_type=media_type, p_media=Path(media_path))
-            if media_id:
-                if not (kwargs.get('touser') or kwargs.get('toparty') or kwargs.get('totag')):
-                    # 三者均为空，默认发送全体成员
-                    kwargs.update({'touser': ['@all']})
-                data = {
-                    "touser": self._list2str(kwargs.get('touser', [])),
-                    "toparty": self._list2str(kwargs.get('toparty', [])),
-                    "totag": self._list2str(kwargs.get('totag', [])),
-                    "msgtype": media_type,
-                    "agentid": self._agentid,
-                    media_type: {
-                        "media_id": media_id
-                    },
-                    "safe": kwargs.get('safe', 0)
+            self.logger.error(f"发送失败! 原因：{send_res['errmsg']}")
+            return send_res
+
+    def _send(self,
+              msg_type: str = '',
+              data: dict = {},
+              media_path: Optional[str] = '',
+              **kwargs):
+        '''
+        新的统一内部发送接口，供不同消息推送接口调用
+        :param msg_type: 
+        :param data: 
+        :param media_path: 只有需要media id的时候才传入
+        :param kwargs:
+        :return: 
+        '''
+        media_types = {'image', 'voice', 'video', 'file'}
+        # prepare data
+        if not (kwargs.get('touser') or kwargs.get('toparty') or kwargs.get('totag')):
+            # 三者均为空，默认发送全体成员
+            kwargs['touser'] = ['@all']
+        data.update({
+            "touser": self.__list2str(kwargs.get('touser', [])),
+            "toparty": self.__list2str(kwargs.get('toparty', [])),
+            "totag": self.__list2str(kwargs.get('totag', [])),
+            "msgtype": msg_type,  # 注意这里msg_type已经是正确了，后面的改动不影响
+            "agentid": self._agentid,
+            "safe": kwargs.get('safe'),
+            "enable_id_trans": kwargs.get('enable_id_trans'),
+            "enable_duplicate_check": kwargs.get('enable_duplicate_check'),
+            "duplicate_check_interval": kwargs.get('duplicate_check_interval')
+        })
+        # 检查消息类型是否需要获取media_id, 如需要，则获取，并做相应检查
+        if msg_type in media_types:
+            # 发送媒体消息
+            self._media_api = self._media_interface.format(self.access_token, msg_type)
+            media_res = self._get_media_id(media_type=msg_type, p_media=Path(media_path))
+            data[msg_type] = {
+                "media_id": media_res.get('media_id', None)
+            }
+        elif msg_type == 'mpnews':
+            # mpnews比较特殊，单独处理
+            self._media_api = self._media_interface.format(self.access_token, 'image')
+            media_res = self._get_media_id(media_type='image', p_media=Path(media_path))
+            data[msg_type]["articles"][0]["thumb_media_id"] = media_res.get('media_id', None)
+        send_res = self._post(data)
+        if send_res.get('errcode') == 0:
+            return send_res
+        elif send_res.get('errcode') == 40014:
+            # invalid access token, refresh token
+            self.logger.info("尝试重新获取token并发送消息")
+            self.access_token = self.__get_access_token()  # 运行时长超过token周期导致token更新，无需访问本地token
+            self._webhook = self._web_interface.format(self.access_token)
+            # 如果是media还需要更新media_api
+            if msg_type in media_types:
+                self._media_api = self._media_interface.format(self.access_token, msg_type)
+                media_res = self._get_media_id(media_type=msg_type, p_media=Path(media_path))
+                data[msg_type] = {
+                    "media_id": media_res.get('media_id', None)
                 }
-                return self._post(data)
-            else:
-                return {
-                    'errcode': 405,
-                    'errmsg': self.errmsgs['mediaerror']
-                }
+            elif msg_type == 'mpnews':
+                self._media_api = self._media_interface.format(self.access_token, 'image')
+                media_res = self._get_media_id(media_type='image', p_media=Path(media_path))
+                data[msg_type]["articles"][0]["thumb_media_id"] = media_res.get('media_id', None)
+            return self._post(data)
+        else:
+            self.logger.error(f"发送失败! 原因：{send_res['errmsg']}")
+            return send_res
 
     def send_image(self,
                    image_path: str,
@@ -181,9 +217,13 @@ class AppMsgSender(MsgSender):
         :param image_path: 图片存储路径
         :return:
         '''
-        return self._send_media(media_path=image_path,
-                                media_type='image',
-                                **kwargs)
+        if not is_image(image_path):
+            self.logger.error(self.errmsgs['image_error'])
+            return {
+                'errcode': 404,
+                'errmsg': self.errmsgs['image_error']
+            }
+        return self._send(msg_type='image', media_path=image_path, **kwargs)
 
     def send_voice(self,
                    voice_path: str,
@@ -193,9 +233,14 @@ class AppMsgSender(MsgSender):
         :param voice_path:
         :return:
         '''
-        return self._send_media(media_path=voice_path,
-                                media_type='voice',
-                                **kwargs)
+
+        if not is_voice(voice_path):
+            self.logger.error(self.errmsgs['voice_error'])
+            return {
+                'errcode': 404,
+                'errmsg': self.errmsgs['voice_error']
+            }
+        return self._send(msg_type='voice', media_path=voice_path, **kwargs)
 
     def send_video(self,
                    video_path: str,
@@ -205,9 +250,13 @@ class AppMsgSender(MsgSender):
         :param video_path:
         :return:
         '''
-        return self._send_media(media_path=video_path,
-                                media_type='video',
-                                **kwargs)
+        if not is_video(video_path):
+            self.logger.error(self.errmsgs['video_error'])
+            return {
+                'errcode': 404,
+                'errmsg': self.errmsgs['video_error']
+            }
+        return self._send(msg_type='video', media_path=video_path, **kwargs)
 
     def send_file(self,
                   file_path: str,
@@ -217,37 +266,13 @@ class AppMsgSender(MsgSender):
         :param file_path:
         :return:
         '''
-        return self._send_media(media_path=file_path,
-                                media_type='file',
-                                **kwargs)
-
-    def _send_content(self,
-                      content_type: str,
-                      data: dict,
-                      **kwargs
-                      ):
-        '''
-        除媒体文件外消息的统一发送模板
-        :param content_type: 发送的数据类型
-        :param data: 发送的数据独有字段
-        :param kwargs: 特殊参数，包括touser,toparty, totag
-        :return:
-        '''
-        if not (kwargs.get('touser') or kwargs.get('toparty') or kwargs.get('totag')):
-            # 三者均为空，默认发送全体成员
-            kwargs.update({'touser': ['@all']})
-        data.update({
-            "touser": self._list2str(kwargs.get('touser', [])),
-            "toparty": self._list2str(kwargs.get('toparty', [])),
-            "totag": self._list2str(kwargs.get('totag', [])),
-            "msgtype": content_type,
-            "agentid": self._agentid,
-            "safe": kwargs.get('safe', 0),
-            "enable_id_trans": kwargs.get('enable_id_trans', 0),
-            "enable_duplicate_check": kwargs.get('enable_duplicate_check', 0),
-            "duplicate_check_interval": kwargs.get('duplicate_check_interval', 1800)
-        })
-        return self._post(data)
+        if not is_file(file_path):
+            self.logger.error(self.errmsgs['file_error'])
+            return {
+                'errcode': 404,
+                'errmsg': self.errmsgs['file_error']
+            }
+        return self._send(msg_type='file', media_path=file_path, **kwargs)
 
     def send_text(self,
                   content: str,
@@ -260,18 +285,17 @@ class AppMsgSender(MsgSender):
         :return: send result
         '''
         if not content:
-            self.logger.error(self.errmsgs['texterror'])
+            self.logger.error(self.errmsgs['text_error'])
             return {
                 'errcode': 404,
-                'errmsg': self.errmsgs['texterror']
+                'errmsg': self.errmsgs['text_error']
             }
-        else:
-            data = {
-                "text": {
-                    "content": content
-                },
-            }
-            return self._send_content(content_type='text', data=data, **kwargs)
+        data = {
+            "text": {
+                "content": content
+            },
+        }
+        return self._send(msg_type='text', data=data, **kwargs)
 
     def send_news(self,
                   title: str,
@@ -288,25 +312,24 @@ class AppMsgSender(MsgSender):
         :return:
         '''
         if not (title and url):
-            self.logger.error(self.errmsgs['newserror'])
+            self.logger.error(self.errmsgs['news_error'])
             return {
                 'errcode': 404,
-                'errmsg': self.errmsgs['newserror']
+                'errmsg': self.errmsgs['news_error']
             }
-        else:
-            data = {
-                "news": {
-                    "articles": [
-                        {
-                            "title": title,
-                            "description": desp,
-                            "url": url,
-                            "picurl": picurl
-                        }
-                    ]
-                },
-            }
-            return self._send_content(content_type='news', data=data, **kwargs)
+        data = {
+            "news": {
+                "articles": [
+                    {
+                        "title": title,
+                        "description": desp,
+                        "url": url,
+                        "picurl": picurl
+                    }
+                ]
+            },
+        }
+        return self._send(msg_type='news', data=data, **kwargs)
 
     def send_mpnews(self,
                     title: str,
@@ -328,29 +351,24 @@ class AppMsgSender(MsgSender):
         :return:
         '''
         if not (title and image_path and content):
-            self.logger.error(self.errmsgs['mpnewserror'])
+            self.logger.error(self.errmsgs['mpnews_error'])
             return {
                 'errcode': 404,
-                'errmsg': self.errmsgs['mpnewserror']
+                'errmsg': self.errmsgs['mpnews_error']
             }
-        else:
-            self._media_api = f'https://qyapi.weixin.qq.com/cgi-bin/media/upload?access_token={self.access_token}&type=image'
-            thumb_media_id = self._get_media_id_or_None(media_type='image', p_media=Path(image_path))
-            data = {
-                "mpnews": {
-                    "articles": [
-                        {
-                            "title": title,
-                            "thumb_media_id": thumb_media_id,
-                            "author": author,
-                            "content_source_url": content_source_url,
-                            "content": content,
-                            "digest": digest
-                        }
-                    ]
-                },
-            }
-            return self._send_content(content_type='mpnews', data=data, **kwargs)
+        data = {
+            "mpnews": {
+                "articles": [
+                    {
+                        "title": title,
+                        "author": author,
+                        "content_source_url": content_source_url,
+                        "content": content,
+                        "digest": digest
+                    }
+                ]
+            }}
+        return self._send(msg_type='mpnews', data=data, media_path=image_path, **kwargs)
 
     def send_markdown(self,
                       content: str,
@@ -361,21 +379,20 @@ class AppMsgSender(MsgSender):
         :return:
         '''
         if not content:
-            self.logger.error(self.errmsgs['markdownerror'])
+            self.logger.error(self.errmsgs['markdown_error'])
             return {
                 'errcode': 404,
-                'errmsg': self.errmsgs['markdownerror']
+                'errmsg': self.errmsgs['markdown_error']
             }
-        else:
-            md_path = Path(content)
-            if md_path.is_file():
-                content = md_path.read_text()
-            data = {
-                "markdown": {
-                    "content": content,
-                },
-            }
-            return self._send_content(content_type='markdown', data=data, **kwargs)
+        md_path = Path(content)
+        if md_path.is_file():
+            content = md_path.read_text()
+        data = {
+            "markdown": {
+                "content": content,
+            },
+        }
+        return self._send(msg_type='markdown', data=data, **kwargs)
 
     def send_card(self,
                   title: str,
@@ -392,21 +409,20 @@ class AppMsgSender(MsgSender):
         :return:
         '''
         if not (title and desp and url):
-            self.logger.error(self.errmsgs['carderror'])
+            self.logger.error(self.errmsgs['card_error'])
             return {
                 'errcode': 404,
-                'errmsg': self.errmsgs['carderror']
+                'errmsg': self.errmsgs['card_error']
             }
-        else:
-            data = {
-                "textcard": {
-                    "title": title,
-                    "description": desp,
-                    "url": url,
-                    "btntxt": btntxt
-                },
-            }
-            return self._send_content(content_type='textcard', data=data, **kwargs)
+        data = {
+            "textcard": {
+                "title": title,
+                "description": desp,
+                "url": url,
+                "btntxt": btntxt
+            },
+        }
+        return self._send(msg_type='textcard', data=data, **kwargs)
 
     def send_taskcard(self,
                       title: str,
@@ -448,20 +464,23 @@ class AppMsgSender(MsgSender):
         :return:
         '''
         if not (title and task_id and btn):
-            self.logger.error(self.errmsgs['taskcarderror'])
+            self.logger.error(self.errmsgs['taskcard_error'])
             return {
                 'errcode': 404,
-                'errmsg': self.errmsgs['taskcarderror']
+                'errmsg': self.errmsgs['taskcard_error']
             }
-        else:
-            data = {
-                "interactive_taskcard": {
-                    "title": title,
-                    "description": desp,
-                    "url": url,
-                    "task_id": task_id,
-                    "btn": btn,
-                },
-            }
-            return self._send_content(content_type='interactive_taskcard', data=data, **kwargs)
+        data = {
+            "interactive_taskcard": {
+                "title": title,
+                "description": desp,
+                "url": url,
+                "task_id": task_id,
+                "btn": btn,
+            },
+        }
+        return self._send(msg_type='interactive_taskcard', data=data, **kwargs)
 
+if __name__ == '__main__':
+    app = AppMsgSender()
+    # app.send_text('123')
+    app.send_image('../tests/data/test.png')
