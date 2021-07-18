@@ -15,8 +15,7 @@
 > 如果喜欢该项目，记得给个star，让更多人能够看到本项目♥️
 
 ## Usage
-
-[点此查看说明文档](https://gentlecp.github.io/corpwechat-bot/)，若无法打开，也可直接访问[原始文档](docs/index.md)
+[点此查看说明文档](https://gentlecp.github.io/corpwechat-bot/) ，若无法打开，也可直接访问[原始文档](docs/index.md)
 
 ## Author
 

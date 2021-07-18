@@ -98,6 +98,14 @@ class Sender(ABC):
         发送任务卡片消息
         '''
 
+    @abstractmethod
+    def send_mpnews(self, *args, **kwargs):
+        '''
+        发送mpnews图文消息
+        :param args:
+        :param kwargs:
+        :return:
+        '''
 
 class MsgSender(Sender):
     """
@@ -111,17 +119,17 @@ class MsgSender(Sender):
         self._webhook = None
         self.headers = None
         self.errmsgs = {
-            'imageerror': '图片文件不合法',
-            'texterror': '文本消息不合法',
-            'newserror': '图文消息内容不合法',
-            'markdownerror': 'markdown内容不合法',
-            'voiceerror': '语音文件不合法',
-            'videoerror': '视频文件不合法',
-            'fileerror': '文件不合法',
-            'carderror': '卡片消息不合法',
-            'mediaerror': 'media_id获取失败',
-            'mpnewserror': 'mp图文消息不合法',
-            'taskcarderror': '任务卡片消息不合法',
+            'image_error': '图片文件不合法',
+            'text_error': '文本消息不合法',
+            'news_error': '图文消息内容不合法',
+            'markdown_error': 'markdown内容不合法',
+            'voice_error': '语音文件不合法',
+            'video_error': '视频文件不合法',
+            'file_error': '文件不合法',
+            'card_error': '卡片消息不合法',
+            'media_error': 'media_id获取失败',
+            'mpnews_error': 'mp图文消息不合法',
+            'taskcard_error': '任务卡片消息不合法',
         }
         self._media_api = ''
         self.key_cfg = ConfigParser()
@@ -194,6 +202,14 @@ class MsgSender(Sender):
         '''
         raise MethodNotImplementedError
 
+    def send_mpnews(self, *args, **kwargs):
+        '''
+        发送mpnews图文消息
+        :param args:
+        :param kwargs:
+        :return:
+        '''
+        raise MethodNotImplementedError
 
     def _get_local_keys(self, section:str, options:[]):
         '''
@@ -214,9 +230,9 @@ class MsgSender(Sender):
             raise FileNotFoundError(f'Can not find file `{KEY_PATH}`')
 
 
-    def _get_media_id_or_None(self,
-                              media_type:str,
-                              p_media:Path):
+    def _get_media_id(self,
+                      media_type:str,
+                      p_media:Path):
         '''
         获取media id，微信要求文件先上传到其后端服务器，再获取相应media id
         :param media_type:
@@ -229,11 +245,9 @@ class MsgSender(Sender):
         res = requests.post(self._media_api, files=files).json()
         if res.get('errcode') == 0:
             self.logger.debug("media_id获取成功")
-            return res.get('media_id')
         else:
             self.logger.error(f"media_id获取失败，原因:{res.get('errmsg')}")
-            return None
-
+        return res
 
     def _post(self, data):
         '''
@@ -266,17 +280,17 @@ class MsgSender(Sender):
             self.logger.error("发送失败, Request Exception!")
             raise
         else:
+            result = None
             try:
                 result = response.json()
             except json.decoder.JSONDecodeError:
                 self.logger.error(f"服务器响应异常，状态码：{response.status_code}，响应内容：{response.text}")
-                return result
             else:
                 if result.get('errcode') == 0:
                     # 发送正常
                     self.logger.info('发送成功!')
-                    return result
                 else:
                     self.logger.error(f"发送失败!，原因：{result['errmsg']}")
-                    return result
+            finally:
+                return result
 

@@ -113,7 +113,7 @@ dmypy.json
 
 # Pyre type checker
 .pyre/
+.idea/
 
-*/token.txt
-
+corpwechatbot/token.json
 settings.py
