@@ -132,7 +132,7 @@ class AppMsgSender(MsgSender):
         '''
         新的统一内部发送接口，供不同消息推送接口调用
         :param msg_type: 
-        :param data: 
+        :param data:
         :param media_path: 只有需要media id的时候才传入
         :param kwargs:
         :return: 
@@ -169,8 +169,8 @@ class AppMsgSender(MsgSender):
         send_res = self._post(data)
         if send_res.get('errcode') == 0:
             return send_res
-        elif send_res.get('errcode') == 40014:
-            # invalid access token, refresh token
+        elif send_res.get('errcode') == 40014 or send_res.get('errcode') == 42001:
+            # invalid access token or token expired, refresh token
             self.logger.info("尝试重新获取token并发送消息")
             self.access_token = self.__get_access_token()  # 运行时长超过token周期导致token更新，无需访问本地token
             self._webhook = self._web_interface.format(self.access_token)
