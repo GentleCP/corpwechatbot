@@ -20,7 +20,7 @@
     
     
       
-        <title>特性说明 - corpwechat-bot： 企业微信消息推送助手</title>
+        <title>功能说明 - corpwechat-bot： 企业微信消息推送助手</title>
       
     
     
@@ -100,7 +100,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              特性说明
+              功能说明
             
           </span>
         </div>
@@ -248,12 +248,12 @@
       
       
         <label class="md-nav__link md-nav__link--active" for="__toc">
-          特性说明
+          功能说明
           <span class="md-nav__icon md-icon"></span>
         </label>
       
       <a href="./" class="md-nav__link md-nav__link--active">
-        特性说明
+        功能说明
       </a>
       
         
@@ -270,43 +270,23 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#serverchan" class="md-nav__link">
-    与ServerChan对比
+  <a href="#_2" class="md-nav__link">
+    应用消息推送
   </a>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#_2" class="md-nav__link">
-    已实现功能
-  </a>
-  
-    <nav class="md-nav" aria-label="已实现功能">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
   <a href="#_3" class="md-nav__link">
-    应用消息推送
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#_4" class="md-nav__link">
     群聊机器人消息推送
   </a>
   
 </li>
-        
-          <li class="md-nav__item">
-  <a href="#_5" class="md-nav__link">
+      
+        <li class="md-nav__item">
+  <a href="#_4" class="md-nav__link">
     终端一条命令式消息推送
   </a>
-  
-</li>
-        
-      </ul>
-    </nav>
   
 </li>
       
@@ -388,43 +368,23 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#serverchan" class="md-nav__link">
-    与ServerChan对比
+  <a href="#_2" class="md-nav__link">
+    应用消息推送
   </a>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#_2" class="md-nav__link">
-    已实现功能
-  </a>
-  
-    <nav class="md-nav" aria-label="已实现功能">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
   <a href="#_3" class="md-nav__link">
-    应用消息推送
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#_4" class="md-nav__link">
     群聊机器人消息推送
   </a>
   
 </li>
-        
-          <li class="md-nav__item">
-  <a href="#_5" class="md-nav__link">
+      
+        <li class="md-nav__item">
+  <a href="#_4" class="md-nav__link">
     终端一条命令式消息推送
   </a>
-  
-</li>
-        
-      </ul>
-    </nav>
   
 </li>
       
@@ -445,55 +405,10 @@
                   </a>
                 
                 
-                <h1 id="_1">特性说明<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h1>
-<p><code>corpwechat-bot</code>的定位是让用户随时随地了解服务器端程序的运行结果，同类型的方法有很多，例如邮件，钉钉（这两个的消息推送我在我的另一个库<a href="https://github.com/GentleCP/cptools">cptools</a>中实现了，有兴趣的可以去看看），bark等。但对于一般人来说，最方便的接收方式还是微信，但个人微信并不提供给开发者API（以前可以用网页微信，现在被禁了）。
-拥有同样功能比较知名的有：<code>ServerChan</code>，之前提供公众号模板消息推送，但由于微信官方原因，在<code>21年4月底下线</code>，因此推出了<code>Turbo</code>版，支持企业微信消息推送。我在使用过之后发现几个主要问题<img alt="🙋" class="emojione" src="https://cdnjs.cloudflare.com/ajax/libs/emojione/2.2.7/assets/png/1f64b.png" title=":raising_hand:" />，并与<code>corpwechat-bot</code>进行了对比：</p>
-<h2 id="serverchan">与ServerChan对比<a class="headerlink" href="#serverchan" title="Permanent link">&para;</a></h2>
-<blockquote>
-<p><strong>注意</strong>：ServerChan已推出可自己部署的开源版，以下对比均为商业版<code>ServerChan</code></p>
-</blockquote>
-<table>
-<thead>
-<tr>
-<th>对比项</th>
-<th>ServerChan</th>
-<th>corpwechat-bot</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><strong>消息推送限制</strong></td>
-<td><img alt="😥" class="emojione" src="https://cdnjs.cloudflare.com/ajax/libs/emojione/2.2.7/assets/png/1f625.png" title=":disappointed_relieved:" /> 普通用户消息推送次数限制（每天5次，会员不限）</td>
-<td><img alt="☺️" class="emojione" src="https://cdnjs.cloudflare.com/ajax/libs/emojione/2.2.7/assets/png/263a.png" title=":relaxed:" /> ​<code>corpwechat-bot</code>直接和企业微信对接，消息发送仅受微信官方限制（每分钟20条）</td>
-</tr>
-<tr>
-<td><strong>个人信息安全性</strong></td>
-<td><img alt="😩" class="emojione" src="https://cdnjs.cloudflare.com/ajax/libs/emojione/2.2.7/assets/png/1f629.png" title=":weary:" /> 个人企业号、应用id和密钥由<code>ServerChan</code>云端存储，所有发送的消息也经过<code>ServerChan</code>转发（先到<code>ServerChan</code>后台，再由<code>ServerChan</code>发送到微信）</td>
-<td><img alt="😇" class="emojione" src="https://cdnjs.cloudflare.com/ajax/libs/emojione/2.2.7/assets/png/1f607.png" title=":innocent:" /> <code>corpwechat-bot</code>本身不存储任何用户的密钥（由用户本地保存），所有消息也是直接发送到企业微信后台，保证数据安全性</td>
-</tr>
-<tr>
-<td><strong>创建、使用便捷性</strong></td>
-<td><img alt="😣" class="emojione" src="https://cdnjs.cloudflare.com/ajax/libs/emojione/2.2.7/assets/png/1f623.png" title=":persevere:" /> 主要使用步骤：<br />1.  用户注册企业微信<br />2.  创建<code>ServerChan</code>应用<br />3.  提交企业号、应用id、应用密钥到<code>ServerChan</code>，获取<code>sendKey</code><br />4. 利用<code>sendKey</code>发送<code>http</code>请求到指定url完成消息发送</td>
-<td><img alt="😉" class="emojione" src="https://cdnjs.cloudflare.com/ajax/libs/emojione/2.2.7/assets/png/1f609.png" title=":wink:" /> 主要使用步骤：​<br />1. 用户注册企业微信<br />2. 创建个人消息推送应用，获取相应密钥<br />3. 一条命令<code>pip install -U corpwechatbot</code>安装<br />4. 利用<code>corpwechatbot</code>的消息发送接口发送消息</td>
-</tr>
-<tr>
-<td><strong>消息类型支持</strong></td>
-<td><img alt="😔" class="emojione" src="https://cdnjs.cloudflare.com/ajax/libs/emojione/2.2.7/assets/png/1f614.png" title=":pensive:" /> 仅支持<code>title</code>+<code>description</code>（支持<code>markdown</code>）的消息发送格式​</td>
-<td><img alt="😋" class="emojione" src="https://cdnjs.cloudflare.com/ajax/libs/emojione/2.2.7/assets/png/1f60b.png" title=":yum:" /> 支持文本、<code>markdown</code>，图片、语音、视频、文件、卡片等多个企业微信提供的消息类型​</td>
-</tr>
-<tr>
-<td><strong>开源</strong></td>
-<td><img alt="😢" class="emojione" src="https://cdnjs.cloudflare.com/ajax/libs/emojione/2.2.7/assets/png/1f622.png" title=":cry:" /> ​不开源，所有代码均由<code>ServerChan</code>自身管控</td>
-<td><img alt="😎" class="emojione" src="https://cdnjs.cloudflare.com/ajax/libs/emojione/2.2.7/assets/png/1f60e.png" title=":sunglasses:" /> 开源在Github​，任何人可以依据源代码添加定制自己想要的功能，或贡献自己的一份力到开源项目中</td>
-</tr>
-</tbody>
-</table>
-<blockquote>
-<p><strong>特别说明</strong>：虽然上面的对比偏向于突出<code>corpwechat-bot</code>的优势，但并没有刻意贬低<code>ServerChan</code>的意思，作为一个公开的服务，<code>ServerChan</code>的这些特性都是可以被接受的，同时<code>ServerChan</code>也是一款<strong>非常优秀</strong>的消息推送工具（我之前一直在使用），支持各大类型的消息推送接口（企业微信、钉钉、bark等等），但考虑到上面的几个特性，所以我选择了自己定制并开源了<code>corpwechat-bot</code>，希望给和我一样想法的用户<strong>多一份选择</strong>，未来<code>corpwechat-bot</code>还会添加更多的功能和特性，详情查看主页，当然你也可以在<code>issue</code>中提出你的合理需求，或提交PR来帮助<code>corpwechat-bot</code>做的更好!!!</p>
-</blockquote>
-<h2 id="_2">已实现功能<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
+                <h1 id="_1">功能说明<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h1>
+<p>本页面主要说明<code>corpwechatbot</code>已经实现的功能，未来还会添加更多的功能进来，敬请期待😋。 </p>
 <p>目前实现了两种推送消息方式，<strong>应用消息推送</strong>、<strong>群聊机器人消息推送</strong>，其中，应用消息除了从服务端发送，移动端接收以外，也支持相应的回调（移动端发送到服务端），并且在此基础上，添加了<strong>终端一条命令式</strong>上述两种消息的推送，具体如下：</p>
-<h3 id="_3">应用消息推送<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h3>
+<h2 id="_2">应用消息推送<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
 <p>该推送会直接传至你的个人微信上，你会像收到好友消息一样收到通知信息，不需要安装企业微信</p>
 <ul>
 <li>文本消息: 最普通的消息，文字内容，最长不超过2048个字节</li>
@@ -508,7 +423,7 @@
 <li>任务卡片消息：应用与用户交互的卡片，需要配置回调</li>
 <li><strong>应用消息回调</strong>：实现移动端到服务端的交互，具体看使用教程</li>
 </ul>
-<h3 id="_4">群聊机器人消息推送<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h3>
+<h2 id="_3">群聊机器人消息推送<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
 <p>该推送仅会发送消息到企业微信群聊中，经测试，个人微信的企业群聊不会收到机器人发送的消息，因此要收到消息需安装企业微信</p>
 <ul>
 <li>文本消息：普通文字消息，最长不超过2048个字节</li>
@@ -516,8 +431,8 @@
 <li>图文消息：图片文字形式，带有跳转链接，适合打广告</li>
 <li>文件消息：发送单个文件到群聊，大小在5B~20MB之间</li>
 </ul>
-<h3 id="_5">终端一条命令式消息推送<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h3>
-<p>直接在终端发送消息，仅支持文本与markdown，具体查看使用教程</p>
+<h2 id="_4">终端一条命令式消息推送<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
+<p>直接在终端发送消息，仅支持文本与markdown</p>
                 
               
               
