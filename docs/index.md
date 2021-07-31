@@ -12,27 +12,16 @@
 
 :wave: `corpwechat-bot`是一个`python`封装的企业机器人&应用消息推送库，通过企业微信提供的api实现。
 
-利用本库，你可以轻松地实现从服务器端发送一条文本、图片、视频、`markdown`等等消息到你的微信手机端，而不依赖于其他的第三方应用，如`ServerChan`。
-
-> 如果喜欢该项目，记得给个star，让更多人能够看到本项目♥️
+利用本库，你可以轻松地实现从服务器端发送一条文本、图片、视频、`markdown`等等消息到你的微信手机端，而不依赖于其他的第三方应用
 
 ## QuickStart
 
-[QuickStart](quickstart.md)能够让你在最快的时间内上手`corpwechatbot`，跳过较为繁杂的参数步骤，但如果你希望能更好地使用`corpwechatbot`，请查看**Usage**
+[快速开始](quickstart.md)能够让你在最快的时间内上手`corpwechatbot`，跳过较为繁杂的参数步骤，但如果你希望能使用更多`corpwechatbot`的功能，请查看[使用教程](usage.md)
 
 ## Usage
-
-> ⚠️ 当第一种安装方式失效时，请尝试第二种
-
 - 安装
 ```python
 pip install -U corpwechatbot
-```
-或者
-```python
-git clone https://github.com/GentleCP/corpwechat-bot.git
-cd corpwechat-bot
-pip install .
 ```
 - 使用     
 
@@ -40,9 +29,10 @@ pip install .
 
 ## ChangeLog
 
-你可以在`ChangeLog`中查看最新版本提交的功能和bug修复信息，[点此](changelog.md)查看ChangeLog
+你可以在[更新日志](changelog.md)中查看最新版本提交的功能和bug修复信息
 
 ## Todo
+下面包括已经完成的功能、修复任务和未来会加入的新功能特性等内容
 
 ### Finished
 
@@ -66,17 +56,15 @@ pip install .
       
 ### Development Schedule
 
-> 排在前面的会优先考虑开发
+> 开发任务队列，排在前面的会优先考虑开发，如果你有希望实现的功能，可以提交`issue`进行说明，合理的会被采纳
 
 - [ ] 对群聊应用消息推送的支持
-
 - [ ] 除文本消息和任务卡片消息以外的其他被动消息回复支持
 - [ ] 完善`web`部分的内容
     - [ ] 针对被动回复消息的`error` 进行处理
     - [ ] 优化代码和注释
     
-    
-
+  
 ## Author
 
 [@GentleCP](https://github.com/GentleCP)

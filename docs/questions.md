@@ -2,6 +2,15 @@
 下面是使用`corpwechatbot`的一些常见问题，主要来源于`issue`和作者本人考虑可能出现的情况，仅供参考。
 > 还有一些程序开发中发现的问题，可能在新版本中得到了修复，因此，如果你使用的版本不是**最新版本**，请先查看[更新日志](changelog.md)，确认是否已经被修复，当前最新版本为<a ><img src="https://img.shields.io/pypi/v/corpwechatbot"/></a>
 
+如果你在使用`corpwechatbot`的过程中发现新的问题，请确认如下步骤：
+
+- 企业微信配置是否正确：包括企业id，应用密钥、应用id，机器人`key`等
+
+- 是否采用了最新版本的`corpwechatbot`（通常来说只要企业微信的接口不变，就不会有问题）
+- 检查本页面已有常见问题，是否已经存在问题解答  
+
+如果以上都检验通过，麻烦你提交`issue`，作者会及时查看并更新解决
+
 ## 在企业微信中能接收应用消息，微信中接收不到？
 - [相关issue](https://github.com/GentleCP/corpwechat-bot/issues/4)
 

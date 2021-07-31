@@ -8,11 +8,9 @@
 <a ><img src="https://img.shields.io/pypi/v/corpwechatbot"/></a>
 </p>
 
-:wave: `corpwechat-bot`是一个`python`封装的企业机器人&应用消息推送库，通过企业微信提供的api实现。
+👋 `corpwechat-bot`是一个`python`封装的企业机器人&应用消息推送库，通过企业微信提供的api实现。
 
-利用本库，你可以轻松地实现从服务器端发送一条文本、图片、视频、`markdown`等等消息到你的微信手机端，而不依赖于其他的第三方应用，如`ServerChan`
-
-> 如果喜欢该项目，记得给个star，让更多人能够看到本项目♥️
+利用本库，你可以轻松地实现从服务器端发送一条文本、图片、视频、`markdown`等等消息到你的微信手机端，而不依赖于其他的第三方应用
 
 ## Usage
 [点此查看说明文档](https://gentlecp.github.io/corpwechat-bot/) ，若无法打开，也可直接访问[原始文档](docs/index.md)
