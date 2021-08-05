@@ -56,6 +56,15 @@ bot.send_text(content='Hello World')
 
 ![](img/bot_msgsend.gif)
 
+## 应用群聊消息推送
+```python
+from corpwechatbot import AppMsgSender
+
+app = AppMsgSender()
+app.send_text("hello world", chatid="123") 
+```
+![](img/appchat_msg_send.png)
+
 ## 应用交互（开发测试版）
 > 通过回调，你可以给你的用户发送指令，让其执行，解决了应用只能单方面给用户发送消息，而不能回复的困境
 
@@ -66,4 +75,4 @@ bot.send_text(content='Hello World')
 - **基于回调的任务卡片演示**
 ![](img/taskcard_example.gif)
 
-详细内容查看**使用教程**
+详细内容查看**Usage**

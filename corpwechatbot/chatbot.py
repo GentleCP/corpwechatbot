@@ -13,10 +13,12 @@
 import base64
 from pathlib import Path
 from hashlib import md5
+from typing import Optional
 from cptools import LogHandler
 
 from corpwechatbot.util import is_image, is_file
 from corpwechatbot._sender import MsgSender
+from corpwechatbot.config import OFFICIAL_APIS
 
 
 class CorpWechatBot(MsgSender):
@@ -27,11 +29,11 @@ class CorpWechatBot(MsgSender):
     def __init__(self,
                  key: str = ''):
         super().__init__()
-        self.__key = self._get_corpkeys(key=key).get('key', '')
-        self._webhook = f'https://qyapi.weixin.qq.com/cgi-bin/webhook/send?key={self.__key}'
+        self.key = self._get_corpkeys(key=key).get('key', '')
         self.headers = {'Content-Type': 'application/json; charset=utf-8'}
         self.logger = LogHandler('CorpWechatBot')
-        self._media_api = f'https://qyapi.weixin.qq.com/cgi-bin/webhook/upload_media?key={self.__key}&type=file'
+        self.webhook_send_api = self.base_url.format(OFFICIAL_APIS['WEBHOOK_SEND'].format(self.key))
+        self._media_api = self.base_url.format(OFFICIAL_APIS['WEBHOOK_MEDIA_UPLOAD'].format(self.key))
 
     def _get_corpkeys(self, key: str = ''):
         '''
@@ -46,6 +48,33 @@ class CorpWechatBot(MsgSender):
         return {
             'key': next(self._get_local_keys(section='chatbot', options=['key']))
         }
+
+    def _send(self,
+              msg_type: str = '',
+              data: dict = {},
+              media_path: Optional[str] = '',
+              **kwargs):
+        '''
+        :param msg_type:
+        :param data:
+        :param media_path:
+        :return:
+        '''
+        data['msgtype'] = msg_type
+        if msg_type == 'image':
+            img_content = Path(media_path).open('rb').read()
+            img_base64 = base64.b64encode(img_content).decode()
+            img_md5 = md5(img_content).hexdigest()
+            data['image']['base64'] = img_base64
+            data['image']['md5'] = img_md5
+        elif msg_type == 'markdown':
+            md_path = Path(data['markdown']['content'])
+            if md_path.is_file():
+                data['markdown']['content'] = md_path.read_text()
+        elif msg_type == 'file':
+            media_res = self._get_media_id(media_type='file', p_media=Path(media_path))
+            data[msg_type]['media_id'] = media_res.get('media_id', '')
+        return self._post(self.webhook_send_api, data)
 
     def send_text(self, content, mentioned_list=[], mentioned_mobile_list=[]):
         '''
@@ -62,32 +91,15 @@ class CorpWechatBot(MsgSender):
                 'errmsg': self.errmsgs['text_error']
             }
         data = {
-            "msgtype": "text",
             "text": {
                 "content": content,
                 "mentioned_list": mentioned_list,
                 "mentioned_mobile_list": mentioned_mobile_list
             }
         }
-        return self._post(data)
+        return self._send(msg_type='text', data=data)
 
-    def _send_image(self, img_base64, img_md5):
-        '''
-        发送图片
-        :param img_base64: 图片转换成base64数据
-        :param img_md5: 图片md5值
-        :return:
-        '''
-        data = {
-            "msgtype": "image",
-            "image": {
-                "base64": img_base64,
-                "md5": img_md5
-            }
-        }
-        return self._post(data)
-
-    def send_image(self, image_path=None):
+    def send_image(self, image_path=''):
         '''
         发送图片类型，限制大小2M，支持JPG，PNG格式
         :param image_path: 图片文件路径
@@ -99,19 +111,15 @@ class CorpWechatBot(MsgSender):
                 'errcode': 404,
                 'errmsg': self.errmsgs['image_error']
             }
-        img_content = Path(image_path).open('rb').read()
-        img_base64 = base64.b64encode(img_content).decode()
-        img_md5 = md5(img_content).hexdigest()
         data = {
-            "msgtype": "image",
             "image": {
-                "base64": img_base64,
-                "md5": img_md5
+                "base64": '',
+                "md5": '',
             }
         }
-        return self._post(data)
+        return self._send(msg_type='image', data=data, media_path=image_path)
 
-    def send_news(self, title, desp=None, url='', picurl=''):
+    def send_news(self, title='', desp='', url='', picurl=''):
         '''
         发送图文消息
         :param title: 图文标题，不超过128个字节，超过会自动截断
@@ -127,7 +135,6 @@ class CorpWechatBot(MsgSender):
                 'errmsg': self.errmsgs['news_error']
             }
         data = {
-            "msgtype": "news",
             "news": {
                 "articles": [
                     {
@@ -139,9 +146,9 @@ class CorpWechatBot(MsgSender):
                 ]
             }
         }
-        return self._post(data)
+        return self._send(msg_type='news', data=data)
 
-    def send_markdown(self, content):
+    def send_markdown(self, content=''):
         '''
         发送markdown类型数据，支持markdown语法
         :param content: mardkown原始数据或markdown文件路径
@@ -153,16 +160,12 @@ class CorpWechatBot(MsgSender):
                 'errcode': 404,
                 'errmsg': self.errmsgs['markdown_error']
             }
-        md_path = Path(content)
-        if md_path.is_file():
-            content = md_path.read_text()
         data = {
-            "msgtype": "markdown",
             "markdown": {
                 "content": content
             }
         }
-        return self._post(data)
+        return self._send(msg_type='markdown', data=data)
 
     def send_file(self, file_path: str):
         '''
@@ -176,17 +179,13 @@ class CorpWechatBot(MsgSender):
                 'errcode': 404,
                 'errmsg': self.errmsgs['file_error']
             }
-        media_res = self._get_media_id(media_type='file', p_media=Path(file_path))
-        if media_res.get('errcode') == 0:
-            data = {
-                "msgtype": "file",
-                "file": {
-                    "media_id": media_res['media_id'],
-                }
+        data = {
+            "file": {
+                "media_id": '',
             }
-            return self._post(data)
-        else:
-            return {
-                'errcode': 405,
-                'errmsg': self.errmsgs['media_error']
-            }
+        }
+        return self._send(msg_type='file', data=data, media_path=file_path)
+
+if __name__ == "__main__":
+    bot = CorpWechatBot()
+    bot.send_text('123')

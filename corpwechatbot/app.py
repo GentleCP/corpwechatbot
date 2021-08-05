@@ -22,6 +22,7 @@ from typing import List, Dict
 from corpwechatbot._sender import MsgSender
 from corpwechatbot.error import TokenGetError, MethodNotImplementedError
 from corpwechatbot.util import is_image, is_voice, is_video, is_file
+from corpwechatbot.config import OFFICIAL_APIS
 
 CUR_PATH = Path(__file__)
 TOKEN_PATH = CUR_PATH.parent.joinpath('token.json')  # 存储在本项目根目录下
@@ -35,26 +36,33 @@ class AppMsgSender(MsgSender):
     def __init__(self,
                  corpid: str = '',
                  corpsecret: str = '',
-                 agentid: str = ''):
+                 agentid: str = '',
+                 **kwargs):
         '''
         :param corpid: 企业id
         :param corpsecret: 应用密钥
         :param agentid: 应用id
         '''
         super().__init__()
-        corpkeys = self._get_corpkeys(corpid=corpid, corpsecret=corpsecret, agentid=agentid)
-        self._corpid = corpkeys.get('corpid', '')
-        self._corpsecret = corpkeys.get('corpsecret', '')
-        self._agentid = corpkeys.get('agentid', '')
-        self._token_key = hashlib.sha1(bytes(self._corpid + self._agentid, encoding='utf-8')).hexdigest()
-
-        self.access_token = self.get_assess_token()
-        self._web_interface = 'https://qyapi.weixin.qq.com/cgi-bin/message/send?access_token={}'
-        self._media_interface = 'https://qyapi.weixin.qq.com/cgi-bin/media/upload?access_token={}&type={}'
-        self._webhook = self._web_interface.format(self.access_token)
+        corpkeys = self._get_corpkeys(corpid=corpid, corpsecret=corpsecret, agentid=agentid, **kwargs)
+        self.corpid = corpkeys.get('corpid', '')
+        self.corpsecret = corpkeys.get('corpsecret', '')
+        self.agentid = corpkeys.get('agentid', '')
+        self._token_key = hashlib.sha1(bytes(self.corpid + self.agentid, encoding='utf-8')).hexdigest()
         self.logger = LogHandler('AppMsgSender')
 
-    def _get_corpkeys(self, corpid: str = '', corpsecret: str = '', agentid: str = ''):
+        # APIs
+        self.get_token_api = self.base_url.format(
+            OFFICIAL_APIS['GET_ACCESS_TOKEN'].format(self.corpid, self.corpsecret))
+        self.__fresh_msg_send_api()
+        self.appchat_create_api = self.base_url.format(OFFICIAL_APIS['APPCHAT_CREATE'].format(self.access_token))
+        self.appchat_send_api = self.base_url.format(OFFICIAL_APIS['APPCHAT_SEND'].format(self.access_token))
+
+    def __fresh_msg_send_api(self):
+        self.access_token = self.get_assess_token()
+        self.msg_send_api = self.base_url.format(OFFICIAL_APIS['MESSAGE_SEND'].format(self.access_token))
+
+    def _get_corpkeys(self, corpid: str = '', corpsecret: str = '', agentid: str = '', **kwargs):
         '''
         get keys for app from parameter or local
         :param corpid:
@@ -72,7 +80,7 @@ class AppMsgSender(MsgSender):
             # from local
             res = {}
             options = ['corpid', 'corpsecret', 'agentid']
-            for k, v in zip(options, self._get_local_keys(section='app', options=options)):
+            for k, v in zip(options, self._get_local_keys(section='app', options=options, **kwargs)):
                 res.update({k: v})
             return res
 
@@ -102,8 +110,7 @@ class AppMsgSender(MsgSender):
                 return token
 
     def __get_access_token(self, token_dict={}):
-        token_api = f'https://qyapi.weixin.qq.com/cgi-bin/gettoken?corpid={self._corpid}&corpsecret={self._corpsecret}'
-        res = requests.get(token_api).json()
+        res = requests.get(self.get_token_api).json()
         if res.get('errcode') == 0:
             self.logger.info("token请求成功")
             token = res.get('access_token')
@@ -124,6 +131,30 @@ class AppMsgSender(MsgSender):
         '''
         return "".join([item + '|' for item in datas])[:-1]
 
+    def __check_type_and_send(self, msg_type, data, media_path):
+        '''
+        :param msg_type:
+        :param data:
+        :param media_path:
+        :return:
+        '''
+        media_types = {'image', 'voice', 'video', 'file'}
+        if msg_type in media_types:
+            # 发送媒体消息
+            self._media_api = self.base_url.format(OFFICIAL_APIS['MEDIA_UPLOAD'].format(self.access_token, msg_type))
+            media_res = self._get_media_id(media_type=msg_type, p_media=Path(media_path))
+            data[msg_type] = {
+                "media_id": media_res.get('media_id', '')
+            }
+        elif msg_type == 'mpnews':
+            # mpnews比较特殊，单独处理
+            self._media_api = self.base_url.format(OFFICIAL_APIS['MEDIA_UPLOAD'].format(self.access_token, 'image'))
+            media_res = self._get_media_id(media_type='image', p_media=Path(media_path))
+            data[msg_type]["articles"][0]["thumb_media_id"] = media_res.get('media_id', None)
+        if data['chatid']:
+            return self._post(self.appchat_send_api, data)
+        return self._post(self.msg_send_api, data)
+
     def _send(self,
               msg_type: str = '',
               data: dict = {},
@@ -137,55 +168,35 @@ class AppMsgSender(MsgSender):
         :param kwargs:
         :return: 
         '''
-        media_types = {'image', 'voice', 'video', 'file'}
         # prepare data
         if not (kwargs.get('touser') or kwargs.get('toparty') or kwargs.get('totag')):
             # 三者均为空，默认发送全体成员
             kwargs['touser'] = ['@all']
+        data['chatid'] = kwargs.get('chatid', '')
+        if not data['chatid']:
+            # 不是发送到群聊的消息
+            data.update({
+                "touser": self.__list2str(kwargs.get('touser', [])),
+                "toparty": self.__list2str(kwargs.get('toparty', [])),
+                "totag": self.__list2str(kwargs.get('totag', [])),
+                "agentid": self.agentid,
+                "enable_id_trans": kwargs.get('enable_id_trans'),
+                "enable_duplicate_check": kwargs.get('enable_duplicate_check'),
+                "duplicate_check_interval": kwargs.get('duplicate_check_interval')
+            })
         data.update({
-            "touser": self.__list2str(kwargs.get('touser', [])),
-            "toparty": self.__list2str(kwargs.get('toparty', [])),
-            "totag": self.__list2str(kwargs.get('totag', [])),
             "msgtype": msg_type,  # 注意这里msg_type已经是正确了，后面的改动不影响
-            "agentid": self._agentid,
-            "safe": kwargs.get('safe'),
-            "enable_id_trans": kwargs.get('enable_id_trans'),
-            "enable_duplicate_check": kwargs.get('enable_duplicate_check'),
-            "duplicate_check_interval": kwargs.get('duplicate_check_interval')
+            "safe": kwargs.get('safe', 0)
         })
         # 检查消息类型是否需要获取media_id, 如需要，则获取，并做相应检查
-        if msg_type in media_types:
-            # 发送媒体消息
-            self._media_api = self._media_interface.format(self.access_token, msg_type)
-            media_res = self._get_media_id(media_type=msg_type, p_media=Path(media_path))
-            data[msg_type] = {
-                "media_id": media_res.get('media_id', None)
-            }
-        elif msg_type == 'mpnews':
-            # mpnews比较特殊，单独处理
-            self._media_api = self._media_interface.format(self.access_token, 'image')
-            media_res = self._get_media_id(media_type='image', p_media=Path(media_path))
-            data[msg_type]["articles"][0]["thumb_media_id"] = media_res.get('media_id', None)
-        send_res = self._post(data)
+        send_res = self.__check_type_and_send(msg_type, data, media_path)
         if send_res.get('errcode') == 0:
             return send_res
         elif send_res.get('errcode') == 40014 or send_res.get('errcode') == 42001:
             # invalid access token or token expired, refresh token
             self.logger.info("尝试重新获取token并发送消息")
-            self.access_token = self.__get_access_token()  # 运行时长超过token周期导致token更新，无需访问本地token
-            self._webhook = self._web_interface.format(self.access_token)
-            # 如果是media还需要更新media_api
-            if msg_type in media_types:
-                self._media_api = self._media_interface.format(self.access_token, msg_type)
-                media_res = self._get_media_id(media_type=msg_type, p_media=Path(media_path))
-                data[msg_type] = {
-                    "media_id": media_res.get('media_id', None)
-                }
-            elif msg_type == 'mpnews':
-                self._media_api = self._media_interface.format(self.access_token, 'image')
-                media_res = self._get_media_id(media_type='image', p_media=Path(media_path))
-                data[msg_type]["articles"][0]["thumb_media_id"] = media_res.get('media_id', None)
-            return self._post(data)
+            self.__fresh_msg_send_api()
+            return self.__check_type_and_send(msg_type, data, media_path)
         else:
             self.logger.error(f"发送失败! 原因：{send_res['errmsg']}")
             return send_res
@@ -214,7 +225,6 @@ class AppMsgSender(MsgSender):
         :param voice_path:
         :return:
         '''
-
         if not is_voice(voice_path):
             self.logger.error(self.errmsgs['voice_error'])
             return {
@@ -272,6 +282,7 @@ class AppMsgSender(MsgSender):
                 'errmsg': self.errmsgs['text_error']
             }
         data = {
+            "chatid": kwargs.get('chatid', ''),
             "text": {
                 "content": content
             },
@@ -461,8 +472,35 @@ class AppMsgSender(MsgSender):
         }
         return self._send(msg_type='interactive_taskcard', data=data, **kwargs)
 
+    def create_chat(self,
+                    users: list,
+                    name: Optional[str] = '',
+                    owner: Optional[str] = '',
+                    chatid: Optional[str] = ''):
+        '''
+        创建应用群聊
+        :param users: 用户id列表，至少2人
+        :param name: 群聊名称
+        :param owner: 群主id，不指定会随机
+        :param chatid:
+        :return:
+        '''
+        if len(users) < 2:
+            self.logger.error(self.errmsgs['create_chat_error'])
+            return {
+                'errcode': 404,
+                'errmsg': self.errmsgs['create_chat_error']
+            }
+        data = {
+            "name": name,
+            "owner": owner,
+            "userlist": users,
+            "chatid": chatid,
+        }
+        return self._post(url=self.appchat_create_api, data=data)
 
-if __name__ == '__main__':
-    app = AppMsgSender()
-    # app.send_text('123')
-    app.send_image('../tests/data/test.png')
+
+# if __name__ == '__main__':
+#     app = AppMsgSender(key_path=Path.home().joinpath(".corpwechatbot_key_dmd"))
+#     res = app.create_chat(users=['', ''], owner='', name="test", chatid="123")
+#     print(res)

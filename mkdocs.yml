@@ -54,11 +54,11 @@ extra_javascript:
 # nav:
 #   - 介绍: index.md
 #   - Tricks: tricks/index.md
-#       - 1.高级用法: tricks/advanced-usage.md
-    # - 1. 高级用法: tricks/advanced-usage.md
+#       - 1.高级用法: tricks/advanced-index.md
+    # - 1. 高级用法: tricks/advanced-index.md
     # - 2. 一句话trick: tricks/one-line-trick.md
     # - 3. 标准模块: tricks/standard-module.md
-    # - 4. pycharm使用trick: tricks/pycharm-usage.md
+    # - 4. pycharm使用trick: tricks/pycharm-index.md
   # - 三. Design: design/index.md
   #     - 1. 设计模式: design/patterns.md
   #     - 2. 魔法方法: design/magic-method.md

@@ -16,13 +16,12 @@ import time
 import configparser
 from pathlib import Path
 from abc import abstractmethod, ABC
+from typing import Optional
 from queue import Queue
 from configparser import ConfigParser
 from cptools import LogHandler
 
 from corpwechatbot.error import KeyConfigError, MethodNotImplementedError, TokenGetError
-
-KEY_PATH = Path.home().joinpath('.corpwechatbot_key')
 
 
 class Sender(ABC):
@@ -31,12 +30,11 @@ class Sender(ABC):
     '''
 
     @abstractmethod
-    def send_text(self, *args,**kwargs):
+    def send_text(self, *args, **kwargs):
         '''
         send text message
         :return:
         '''
-
 
     @abstractmethod
     def send_image(self, *args, **kwargs):
@@ -45,20 +43,17 @@ class Sender(ABC):
         :return:
         '''
 
-
     @abstractmethod
     def send_voice(self, *args, **kwargs):
         '''
         发送语音消息
         '''
 
-
     @abstractmethod
     def send_video(self, *args, **kwargs):
         '''
         发送视频消息
         '''
-
 
     @abstractmethod
     def send_news(self, *args, **kwargs):
@@ -67,14 +62,12 @@ class Sender(ABC):
         :return:
         '''
 
-
     @abstractmethod
     def send_markdown(self, *args, **kwargs):
         '''
         send markdown message
         :return:
         '''
-
 
     @abstractmethod
     def send_file(self, *args, **kwargs):
@@ -83,14 +76,11 @@ class Sender(ABC):
         :return:
         '''
 
-
-
     @abstractmethod
     def send_card(self, *args, **kwargs):
         '''
         发送卡片消息
         '''
-
 
     @abstractmethod
     def send_taskcard(self, *args, **kwargs):
@@ -106,6 +96,7 @@ class Sender(ABC):
         :param kwargs:
         :return:
         '''
+
 
 class MsgSender(Sender):
     """
@@ -130,17 +121,18 @@ class MsgSender(Sender):
             'media_error': 'media_id获取失败',
             'mpnews_error': 'mp图文消息不合法',
             'taskcard_error': '任务卡片消息不合法',
+            'create_chat_error': '群聊创建失败，人数不能低于2'
         }
         self._media_api = ''
         self.key_cfg = ConfigParser()
+        self.base_url = 'https://qyapi.weixin.qq.com{}'  # 后面接各种不同的接口suffix
 
-    def send_text(self, *args,**kwargs):
+    def send_text(self, *args, **kwargs):
         '''
         send text message
         :return:
         '''
         raise MethodNotImplementedError
-
 
     def send_image(self, *args, **kwargs):
         '''
@@ -149,20 +141,17 @@ class MsgSender(Sender):
         '''
         raise MethodNotImplementedError
 
-
     def send_voice(self, *args, **kwargs):
         '''
         发送语音消息
         '''
         raise MethodNotImplementedError
 
-
     def send_video(self, *args, **kwargs):
         '''
         发送视频消息
         '''
         raise MethodNotImplementedError
-
 
     def send_news(self, *args, **kwargs):
         '''
@@ -171,14 +160,12 @@ class MsgSender(Sender):
         '''
         raise MethodNotImplementedError
 
-
     def send_markdown(self, *args, **kwargs):
         '''
         send markdown message
         :return:
         '''
         raise MethodNotImplementedError
-
 
     def send_file(self, *args, **kwargs):
         '''
@@ -187,14 +174,11 @@ class MsgSender(Sender):
         '''
         raise MethodNotImplementedError
 
-
-
     def send_card(self, *args, **kwargs):
         '''
         发送卡片消息
         '''
         raise MethodNotImplementedError
-
 
     def send_taskcard(self, *args, **kwargs):
         '''
@@ -211,7 +195,7 @@ class MsgSender(Sender):
         '''
         raise MethodNotImplementedError
 
-    def _get_local_keys(self, section:str, options:[]):
+    def _get_local_keys(self, section: str, options: [], **kwargs):
         '''
         当没有直接传入keys时，尝试从本地文件`$HOME/.corpwechatbot_key`获取
         :param section: 选择的section，用于指定app还是bot
@@ -219,20 +203,20 @@ class MsgSender(Sender):
         :return:
         '''
         self.logger.debug('You have not deliver a key parameter, try to get it from local files')
-        if KEY_PATH.is_file():
-            self.key_cfg.read(KEY_PATH)
+        key_path = Path(kwargs.get('key_path', Path.home().joinpath('.corpwechatbot_key')))
+        if key_path.is_file():
+            self.key_cfg.read(key_path)
             try:
                 for option in options:
                     yield self.key_cfg.get(section, option)
-            except (configparser.NoSectionError,configparser.NoOptionError) as e:
+            except (configparser.NoSectionError, configparser.NoOptionError) as e:
                 raise KeyConfigError
         else:
-            raise FileNotFoundError(f'Can not find file `{KEY_PATH}`')
-
+            raise FileNotFoundError(f"Can not find file `{key_path}`")
 
     def _get_media_id(self,
-                      media_type:str,
-                      p_media:Path):
+                      media_type: str,
+                      p_media: Path):
         '''
         获取media id，微信要求文件先上传到其后端服务器，再获取相应media id
         :param media_type:
@@ -249,10 +233,25 @@ class MsgSender(Sender):
             self.logger.error(f"media_id获取失败，原因:{res.get('errmsg')}")
         return res
 
-    def _post(self, data):
+    def _send(self,
+              msg_type: str = '',
+              data: dict = {},
+              media_path: Optional[str] = '',
+              **kwargs
+              ):
+        '''
+        :param msg_type:
+        :param data:
+        :param media_path:
+        :param kwargs:
+        :return:
+        '''
+
+    def _post(self, url, data):
         '''
         发送消息统一方法，要求utf-8编码，该方法在MsgSender中实现，但不可通过该抽象类进行调用
         :param data: 传输的数据字典
+        :param url:
         :return: 消息发送成功与否
         '''
         now = time.time()
@@ -266,7 +265,7 @@ class MsgSender(Sender):
                 time.sleep(sleep_time)
         try:
             post_data = json.dumps(data)
-            response = requests.post(self._webhook, headers=self.headers, data=post_data)
+            response = requests.post(url, headers=self.headers, data=post_data)
         except requests.exceptions.HTTPError as exc:
             self.logger.error(f"发送失败， HTTP error:{exc.response.status_code} , 原因: {exc.response.reason}")
             raise
@@ -289,8 +288,5 @@ class MsgSender(Sender):
                 if result.get('errcode') == 0:
                     # 发送正常
                     self.logger.info('发送成功!')
-                else:
-                    self.logger.error(f"发送失败!，原因：{result['errmsg']}")
             finally:
                 return result
-

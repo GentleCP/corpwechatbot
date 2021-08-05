@@ -16,14 +16,14 @@ from corpwechatbot.app import AppMsgSender
 
 
 class TestAppMsgSender(unittest.TestCase):
-    ams = AppMsgSender()
+    app = AppMsgSender()
 
     def test_send_text(self):
         '''
         测试文本发送
         :return:
         '''
-        res = self.ams.send_text(content="Hi, it's GentleCP", safe=1)
+        res = self.app.send_text(content="Hi, it's GentleCP", safe=1)
         self.assertEqual(res.get('errcode', 1), 0)
 
     def test_send_voice(self):
@@ -31,7 +31,7 @@ class TestAppMsgSender(unittest.TestCase):
         测试语音发送
         :return:
         '''
-        res = self.ams.send_voice(voice_path="data/test.amr")
+        res = self.app.send_voice(voice_path="data/test.amr")
         self.assertEqual(res.get('errcode', 1), 0)
 
     def test_send_image(self):
@@ -39,7 +39,7 @@ class TestAppMsgSender(unittest.TestCase):
         测试图片发送
         :return:
         '''
-        res = self.ams.send_image(image_path="data/test.png", safe=1)
+        res = self.app.send_image(image_path="data/test.png", safe=1)
         self.assertEqual(res.get('errcode', 1), 0)
 
     def test_send_video(self):
@@ -47,7 +47,7 @@ class TestAppMsgSender(unittest.TestCase):
         测试视频发送
         :return:
         '''
-        res = self.ams.send_video(video_path="data/test.mp4", safe=1)
+        res = self.app.send_video(video_path="data/test.mp4", safe=1)
         self.assertEqual(res.get('errcode', 1), 0)
 
     def test_send_file(self):
@@ -55,7 +55,7 @@ class TestAppMsgSender(unittest.TestCase):
         测试文件发送
         :return:
         '''
-        res = self.ams.send_file(file_path="data/test.txt", safe=1)
+        res = self.app.send_file(file_path="data/test.txt", safe=1)
         self.assertEqual(res.get('errcode', 1), 0)
 
     def test_send_news(self):
@@ -63,7 +63,7 @@ class TestAppMsgSender(unittest.TestCase):
         测试图文消息发送
         :return:
         '''
-        res = self.ams.send_news(title="Hi, it's GentleCP",
+        res = self.app.send_news(title="Hi, it's GentleCP",
                                  desp="Welcome to my world!",
                                  url="https://blog.gentlecp.com",
                                  picurl="https://gitee.com/gentlecp/ImgUrl/raw/master/20210313141425.jpg")
@@ -74,7 +74,7 @@ class TestAppMsgSender(unittest.TestCase):
         测试markdown发送
         :return:
         '''
-        res = self.ams.send_markdown(content="# Hi \n > 好家伙，我tm直接好家伙")
+        res = self.app.send_markdown(content="# Hi \n > 好家伙，我tm直接好家伙")
         self.assertEqual(res.get('errcode', 1), 0)
 
     def test_send_card(self):
@@ -82,7 +82,7 @@ class TestAppMsgSender(unittest.TestCase):
         测试卡片消息发送
         :return:
         '''
-        res = self.ams.send_card(title='求索｜CP',
+        res = self.app.send_card(title='求索｜CP',
                                  desp='CP的个人博客',
                                  url="https://blog.gentlecp.com",
                                  btntxt="more",
@@ -90,7 +90,7 @@ class TestAppMsgSender(unittest.TestCase):
         self.assertEqual(res.get('errcode', 1), 0)
 
     def test_send_mpnews(self):
-        res = self.ams.send_mpnews(title='你好，我是CP',
+        res = self.app.send_mpnews(title='你好，我是CP',
                                    image_path='data/test.png',
                                    content='<a href="https://blog.gentlecp.com">Hello World</a>',
                                    content_source_url='https://blog.gentlecp.com',
