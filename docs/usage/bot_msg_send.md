@@ -70,7 +70,7 @@ bot.send_text(content='Hello World',
 
 进入企业微信后台->通讯录
 
-- 如何获取userID
+- 如何获取userID   
 ![](../img/get_userid.png)
 - 如何获取mobile  
 ![img_15.png](../img/get_mobile.png)

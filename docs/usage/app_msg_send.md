@@ -180,7 +180,7 @@ app.send_text(content='Hello',
 
 进入企业微信后台->通讯录
 
-- 如何获取userID
+- 如何获取userID  
 ![](../img/get_userid.png)
 - 如何获取partyID    
 ![img_13.png](../img/get_partyid.png)
