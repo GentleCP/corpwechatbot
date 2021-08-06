@@ -12,6 +12,7 @@
 
 利用本库，你可以轻松地实现从服务器端发送一条文本、图片、视频、`markdown`等等消息到你的微信手机端，而不依赖于其他的第三方应用
 
+![](docs/img/work_mechanism.png)
 ## Usage
 [点此查看说明文档](https://gentlecp.github.io/corpwechat-bot/) ，若无法打开，也可直接访问[原始文档](docs/index.md)
 

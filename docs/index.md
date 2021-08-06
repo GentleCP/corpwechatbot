@@ -14,6 +14,8 @@
 
 利用本库，你可以轻松地实现从服务器端发送一条文本、图片、视频、`markdown`等等消息到你的微信手机端，而不依赖于其他的第三方应用
 
+![](img/work_mechanism.png)
+
 ## QuickStart
 
 [快速开始](quickstart.md)能够让你在最快的时间内上手`corpwechatbot`，跳过较为繁杂的参数步骤，但如果你希望能使用更多`corpwechatbot`的功能，请查看**Usage**
