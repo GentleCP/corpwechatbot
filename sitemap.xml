@@ -1,47 +1,47 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"><url>
      <loc>https://gentlecp.github.io/corpwechat-bot/</loc>
-     <lastmod>2021-08-05</lastmod>
+     <lastmod>2021-08-06</lastmod>
      <changefreq>daily</changefreq>
     </url><url>
      <loc>https://gentlecp.github.io/corpwechat-bot/changelog/</loc>
-     <lastmod>2021-08-05</lastmod>
+     <lastmod>2021-08-06</lastmod>
      <changefreq>daily</changefreq>
     </url><url>
      <loc>https://gentlecp.github.io/corpwechat-bot/features/</loc>
-     <lastmod>2021-08-05</lastmod>
+     <lastmod>2021-08-06</lastmod>
      <changefreq>daily</changefreq>
     </url><url>
      <loc>https://gentlecp.github.io/corpwechat-bot/questions/</loc>
-     <lastmod>2021-08-05</lastmod>
+     <lastmod>2021-08-06</lastmod>
      <changefreq>daily</changefreq>
     </url><url>
      <loc>https://gentlecp.github.io/corpwechat-bot/quickstart/</loc>
-     <lastmod>2021-08-05</lastmod>
+     <lastmod>2021-08-06</lastmod>
      <changefreq>daily</changefreq>
     </url><url>
      <loc>https://gentlecp.github.io/corpwechat-bot/usage/</loc>
-     <lastmod>2021-08-05</lastmod>
+     <lastmod>2021-08-06</lastmod>
      <changefreq>daily</changefreq>
     </url><url>
      <loc>https://gentlecp.github.io/corpwechat-bot/usage/app_msg_send/</loc>
-     <lastmod>2021-08-05</lastmod>
+     <lastmod>2021-08-06</lastmod>
      <changefreq>daily</changefreq>
     </url><url>
      <loc>https://gentlecp.github.io/corpwechat-bot/usage/appchat_msg_send/</loc>
-     <lastmod>2021-08-05</lastmod>
+     <lastmod>2021-08-06</lastmod>
      <changefreq>daily</changefreq>
     </url><url>
      <loc>https://gentlecp.github.io/corpwechat-bot/usage/bot_msg_send/</loc>
-     <lastmod>2021-08-05</lastmod>
+     <lastmod>2021-08-06</lastmod>
      <changefreq>daily</changefreq>
     </url><url>
      <loc>https://gentlecp.github.io/corpwechat-bot/usage/callback_configuration/</loc>
-     <lastmod>2021-08-05</lastmod>
+     <lastmod>2021-08-06</lastmod>
      <changefreq>daily</changefreq>
     </url><url>
      <loc>https://gentlecp.github.io/corpwechat-bot/usage/terminal_msg_send/</loc>
-     <lastmod>2021-08-05</lastmod>
+     <lastmod>2021-08-06</lastmod>
      <changefreq>daily</changefreq>
     </url>
 </urlset>
