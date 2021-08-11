@@ -14,7 +14,7 @@
 
 ![](docs/img/work_mechanism.png)
 ## Usage
-[点此查看说明文档](https://gentlecp.github.io/corpwechatbot/) ，若无法打开，也可直接访问[原始文档](docs/index.md)
+[点此查看说明文档](https://corpwechatbot.gentlecp.com) ，若无法打开，也可直接访问[原始文档](docs/index.md)
 
 ## Author
 
