@@ -1,9 +1,9 @@
 site_name: corpwechat-bot： 企业微信消息推送助手
 site_description: 帮助你用一行代码实现从服务端到移动端的消息推送和回调
-site_url: https://gentlecp.github.io/corpwechat-bot/
+site_url: https://gentlecp.github.io/corpwechatbot/
 site_author: GentleCP
 repo_name: corpwechat-bot
-repo_url: https://github.com/GentleCP/corpwechat-bot
+repo_url: https://github.com/GentleCP/corpwechatbot
 
 theme:
   name: material
