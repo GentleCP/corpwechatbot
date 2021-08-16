@@ -21,7 +21,7 @@ setup(
     description = about['__name__'],
     license = about['__license__'],
     url = about['__url__'],
-    long_description = "Get more information at [Github](https://github.com/GentleCP/corpwechat-bot)",
+    long_description = "Get more information at [Github](https://github.com/GentleCP/corpwechatbot)",
     long_description_content_type="text/markdown",
     install_requires = requires,
     packages = setuptools.find_packages(),  # 让setuptools自动发现包

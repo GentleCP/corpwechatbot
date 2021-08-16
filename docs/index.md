@@ -1,4 +1,4 @@
-# corpwechatbot
+# 首页
 
 <p align="center">
 <a href="https://github.com/GentleCP/corpwechat-bot"><img width="300" src="https://gitee.com/gentlecp/ImgUrl/raw/master/20210425111523.png"></a>
@@ -27,7 +27,7 @@ pip install -U corpwechatbot
 ```
 - 使用     
 
-[点此](usage/index.md)查看详细使用教程
+[点此](使用教程/index.md)查看详细使用教程
 
 ## ChangeLog
 
@@ -54,7 +54,7 @@ pip install -U corpwechatbot
     - 用户发送消息给应用，识别关键词，返回不同的消息内容
     - 用户点击应用菜单，转换为相应指令，执行自动化任务，接收任务卡片消息，根据卡片内容，用户可选择在移动端点击反馈
     - 服务端（你的服务器）与移动端（你的微信&企业微信）实现更`amazing`的交互模式（💯如聊天机器人）
-      >  该功能的基础原型已经完成，可在[回调配置](usage/index.md#_21)中查看，但还有待改进和测试的空间，暂未发布版本
+      >  该功能的基础原型已经完成，可在[回调配置](使用教程/index.md#_21)中查看，但还有待改进和测试的空间，暂未发布版本
       
 - [x] `feat`: 支持对群聊应用消息推送
 - [x] `feat`: 支持多个本地密钥文件共存
@@ -63,7 +63,7 @@ pip install -U corpwechatbot
 
 > 开发任务队列，排在前面的会优先考虑开发，如果你有希望实现的功能，可以提交`issue`进行说明，合理的会被采纳
 
-
+- [ ] 兼容`python2`
 - [ ] 除文本消息和任务卡片消息以外的其他被动消息回复支持
 - [ ] 完善`web`部分的内容
     - [ ] 针对被动回复消息的`error` 进行处理

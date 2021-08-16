@@ -1,6 +1,6 @@
 site_name: corpwechatbot： 企业微信消息推送助手
 site_description: 帮助你用一行代码实现从服务端到移动端的消息推送和回调
-site_url: https://gentlecp.github.io/corpwechatbot/
+site_url: https://corpwechatbot.gentlecp.com/
 site_author: GentleCP
 repo_name: corpwechatbot
 repo_url: https://github.com/GentleCP/corpwechatbot
@@ -12,6 +12,8 @@ theme:
     accent: 'Pink'
   features:
     # tabs: true
+    - navigation.tabs
+    - navigation.top
     # - navigation.tabs.sticky
   language: 'zh'
   
@@ -47,22 +49,7 @@ markdown_extensions:
 
 
 extra_javascript:
-  - 'js/extra.js'
-  # - 'js/baidu-tongji.js'
+#  - 'js/extra.js'
   - 'https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-MML-AM_CHTML'
 
-# nav:
-#   - 介绍: index.md
-#   - Tricks: tricks/index.md
-#       - 1.高级用法: tricks/advanced-index.md
-    # - 1. 高级用法: tricks/advanced-index.md
-    # - 2. 一句话trick: tricks/one-line-trick.md
-    # - 3. 标准模块: tricks/standard-module.md
-    # - 4. pycharm使用trick: tricks/pycharm-index.md
-  # - 三. Design: design/index.md
-  #     - 1. 设计模式: design/patterns.md
-  #     - 2. 魔法方法: design/magic-method.md
-  # - 四. Quick-Start: quick-start/index.md
-      # - quick-start/py2neo.md
-      # - quick-start/scrapy.md
 
