@@ -344,6 +344,13 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
+  <a href="#v061-210822" class="md-nav__link">
+    v0.6.1: 21/08/22
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#v060-210805" class="md-nav__link">
     v0.6.0: 21/08/05
   </a>
@@ -614,6 +621,13 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
+  <a href="#v061-210822" class="md-nav__link">
+    v0.6.1: 21/08/22
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#v060-210805" class="md-nav__link">
     v0.6.0: 21/08/05
   </a>
@@ -722,6 +736,15 @@
                 
                 
                 <h1 id="_1">更新日志<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h1>
+<h2 id="v061-210822">v0.6.1: 21/08/22<a class="headerlink" href="#v061-210822" title="Permanent link">&para;</a></h2>
+<ul>
+<li><code>fix</code>: 解决<a href="https://github.com/GentleCP/corpwechatbot/issues/9">issue</a></li>
+<li><code>feat</code>: 支持用户自行决定是否显示日志，在初始化<code>AppMsgSender</code>,<code>CorpwechatBot</code>实例的时候传入<code>log_level</code>参数决定日志的显示等级，可选等级有：<code>50(CRITICAL), 40(ERROR), 30(WARNING), 20(INFO,默认), 10(DEBUG), 0(NOTSET)</code>, 下面是一个例子：
+<div class="highlight"><pre><span></span><code><span class="kn">from</span> <span class="nn">corpwechatbot</span> <span class="kn">import</span> <span class="n">AppMsgSender</span>
+
+<span class="n">app</span> <span class="o">=</span> <span class="n">AppMsgSender</span><span class="p">(</span><span class="n">log_level</span><span class="o">=</span><span class="mi">20</span><span class="p">)</span>  <span class="c1"># 显示INFO及以上级别的log</span>
+</code></pre></div></li>
+</ul>
 <h2 id="v060-210805">v0.6.0: 21/08/05<a class="headerlink" href="#v060-210805" title="Permanent link">&para;</a></h2>
 <ul>
 <li><code>feat</code>: 支持应用群聊创建与消息推送</li>
@@ -865,7 +888,7 @@
     <div class="md-dialog" data-md-component="dialog">
       <div class="md-dialog__inner md-typeset"></div>
     </div>
-    <script id="__config" type="application/json">{"base": "..", "features": ["navigation.tabs", "navigation.top"], "translations": {"clipboard.copy": "\u590d\u5236", "clipboard.copied": "\u5df2\u590d\u5236", "search.config.lang": "ja", "search.config.pipeline": "trimmer, stemmer", "search.config.separator": "[\\uff0c\\u3002]+", "search.placeholder": "\u641c\u7d22", "search.result.placeholder": "\u952e\u5165\u4ee5\u5f00\u59cb\u641c\u7d22", "search.result.none": "\u6ca1\u6709\u627e\u5230\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.one": "\u627e\u5230 1 \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.other": "# \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.term.missing": "Missing"}, "search": "../assets/javascripts/workers/search.fb4a9340.min.js", "version": null}</script>
+    <script id="__config" type="application/json">{"base": "..", "features": ["content.code.annotate", "content.tabs.link", "navigation.sections", "navigation.tabs", "navigation.top", "navigation.tracking", "search.highlight", "search.share", "search.suggest"], "translations": {"clipboard.copy": "\u590d\u5236", "clipboard.copied": "\u5df2\u590d\u5236", "search.config.lang": "ja", "search.config.pipeline": "trimmer, stemmer", "search.config.separator": "[\\uff0c\\u3002]+", "search.placeholder": "\u641c\u7d22", "search.result.placeholder": "\u952e\u5165\u4ee5\u5f00\u59cb\u641c\u7d22", "search.result.none": "\u6ca1\u6709\u627e\u5230\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.one": "\u627e\u5230 1 \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.other": "# \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.term.missing": "Missing"}, "search": "../assets/javascripts/workers/search.fb4a9340.min.js", "version": null}</script>
     
     
       <script src="../assets/javascripts/bundle.5cf3e710.min.js"></script>
