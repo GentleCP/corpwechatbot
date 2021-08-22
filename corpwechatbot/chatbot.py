@@ -27,11 +27,11 @@ class CorpWechatBot(MsgSender):
     """
 
     def __init__(self,
-                 key: str = ''):
-        super().__init__()
+                 key: str = '',
+                 log_level: int = 20):
+        super().__init__(log_level)
         self.key = self._get_corpkeys(key=key).get('key', '')
         self.headers = {'Content-Type': 'application/json; charset=utf-8'}
-        self.logger = LogHandler('CorpWechatBot')
         self.webhook_send_api = self.base_url.format(OFFICIAL_APIS['WEBHOOK_SEND'].format(self.key))
         self._media_api = self.base_url.format(OFFICIAL_APIS['WEBHOOK_MEDIA_UPLOAD'].format(self.key))
 
@@ -187,5 +187,5 @@ class CorpWechatBot(MsgSender):
         return self._send(msg_type='file', data=data, media_path=file_path)
 
 if __name__ == "__main__":
-    bot = CorpWechatBot()
+    bot = CorpWechatBot(log_level=20)
     bot.send_text('123')

@@ -19,7 +19,7 @@ from abc import abstractmethod, ABC
 from typing import Optional
 from queue import Queue
 from configparser import ConfigParser
-from cptools import LogHandler
+from cptools import LogHandler, INFO,DEBUG, WARNING, CRITICAL, ERROR
 
 from corpwechatbot.error import KeyConfigError, MethodNotImplementedError, TokenGetError
 
@@ -103,9 +103,9 @@ class MsgSender(Sender):
     The parent class of all the notify classes
     """
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, log_level=INFO, *args, **kwargs):
         super(MsgSender, self).__init__()
-        self.logger = LogHandler('MsgSender')
+        self.logger = LogHandler(self.__class__.__name__, level=log_level)
         self.queue = Queue(20)  # 官方限制每分钟20条消息
         self._webhook = None
         self.headers = None
@@ -202,7 +202,7 @@ class MsgSender(Sender):
         :param options:
         :return:
         '''
-        self.logger.debug('You have not deliver a key parameter, try to get it from local files')
+        self.logger.debug('You have not delivered a key parameter, try to get it from local files')
         key_path = Path(kwargs.get('key_path', Path.home().joinpath('.corpwechatbot_key')))
         if key_path.is_file():
             self.key_cfg.read(key_path)

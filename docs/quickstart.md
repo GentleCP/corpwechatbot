@@ -75,4 +75,4 @@ app.send_text("hello world", chatid="123")
 - **基于回调的任务卡片演示**
 ![](img/taskcard_example.gif)
 
-详细内容查看**Usage**
+详细内容查看[使用教程](使用教程/index.md)

@@ -15,6 +15,7 @@ import requests
 import json
 import hashlib
 from typing import Optional
+from datetime import datetime
 from pathlib import Path
 from cptools import LogHandler
 from typing import List, Dict
@@ -37,20 +38,19 @@ class AppMsgSender(MsgSender):
                  corpid: str = '',
                  corpsecret: str = '',
                  agentid: str = '',
+                 log_level: int = 20,
                  **kwargs):
         '''
         :param corpid: 企业id
         :param corpsecret: 应用密钥
         :param agentid: 应用id
         '''
-        super().__init__()
+        super().__init__(log_level)
         corpkeys = self._get_corpkeys(corpid=corpid, corpsecret=corpsecret, agentid=agentid, **kwargs)
         self.corpid = corpkeys.get('corpid', '')
         self.corpsecret = corpkeys.get('corpsecret', '')
         self.agentid = corpkeys.get('agentid', '')
         self._token_key = hashlib.sha1(bytes(self.corpid + self.agentid, encoding='utf-8')).hexdigest()
-        self.logger = LogHandler('AppMsgSender')
-
         # APIs
         self.get_token_api = self.base_url.format(
             OFFICIAL_APIS['GET_ACCESS_TOKEN'].format(self.corpid, self.corpsecret))
@@ -93,21 +93,19 @@ class AppMsgSender(MsgSender):
         except FileNotFoundError:
             # 尚未获取过token
             self.logger.debug('旧token获取失败，重新获取token')
-            token_dict = {}
-            return self.__get_access_token(token_dict)
+            return self.__get_access_token()
         else:
             try:
-                token = token_dict[self._token_key]
+                token_info = token_dict[self._token_key]
             except KeyError:
                 # 该agentid对应token不存在
                 self.logger.debug("token不存在，获取token")
                 return self.__get_access_token(token_dict)
             else:
-                now = time.time()
-                if now - TOKEN_PATH.stat().st_mtime >= 2 * 3600:
+                if token_info.get('expire_time', float("-inf")) < datetime.now().timestamp():
                     self.logger.debug("token过期，重新获取token")
                     return self.__get_access_token(token_dict)
-                return token
+                return token_info['token']
 
     def __get_access_token(self, token_dict={}):
         res = requests.get(self.get_token_api).json()
@@ -115,12 +113,15 @@ class AppMsgSender(MsgSender):
             self.logger.info("token请求成功")
             token = res.get('access_token')
             token_dict.update({
-                self._token_key: token
+                self._token_key: {
+                    'token': token,
+                    'expire_time': datetime.now().timestamp() + 7200
+                }
             })
             TOKEN_PATH.write_text(json.dumps(token_dict))
             return token
         else:
-            raise TokenGetError(f"token请求失败，原因：{res.get('errmsg', 'None')}")
+            raise TokenGetError(f"token请求失败，原因：{res.get('errmsg', '无法获取token')}")
 
     def __list2str(self, datas: []):
         '''
@@ -500,7 +501,6 @@ class AppMsgSender(MsgSender):
         return self._post(url=self.appchat_create_api, data=data)
 
 
-# if __name__ == '__main__':
-#     app = AppMsgSender(key_path=Path.home().joinpath(".corpwechatbot_key_dmd"))
-#     res = app.create_chat(users=['', ''], owner='', name="test", chatid="123")
-#     print(res)
+if __name__ == '__main__':
+    app = AppMsgSender(log_level=20)
+    app.send_text('123')
