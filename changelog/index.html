@@ -740,9 +740,11 @@
 <ul>
 <li><code>fix</code>: 解决<a href="https://github.com/GentleCP/corpwechatbot/issues/9">issue</a></li>
 <li><code>feat</code>: 支持用户自行决定是否显示日志，在初始化<code>AppMsgSender</code>,<code>CorpwechatBot</code>实例的时候传入<code>log_level</code>参数决定日志的显示等级，可选等级有：<code>50(CRITICAL), 40(ERROR), 30(WARNING), 20(INFO,默认), 10(DEBUG), 0(NOTSET)</code>, 下面是一个例子：
-<div class="highlight"><pre><span></span><code><span class="kn">from</span> <span class="nn">corpwechatbot</span> <span class="kn">import</span> <span class="n">AppMsgSender</span>
+<div class="highlight"><pre><span></span><code><span class="kn">import</span> <span class="nn">cptools</span>
+<span class="kn">from</span> <span class="nn">corpwechatbot</span> <span class="kn">import</span> <span class="n">AppMsgSender</span>
 
 <span class="n">app</span> <span class="o">=</span> <span class="n">AppMsgSender</span><span class="p">(</span><span class="n">log_level</span><span class="o">=</span><span class="mi">20</span><span class="p">)</span>  <span class="c1"># 显示INFO及以上级别的log</span>
+<span class="n">app2</span> <span class="o">=</span> <span class="n">AppMsgSender</span><span class="p">(</span><span class="n">log_level</span><span class="o">=</span><span class="n">cptools</span><span class="o">.</span><span class="n">INFO</span><span class="p">)</span>  <span class="c1"># 你也可以选择易读性更高的传入方式</span>
 </code></pre></div></li>
 </ul>
 <h2 id="v060-210805">v0.6.0: 21/08/05<a class="headerlink" href="#v060-210805" title="Permanent link">&para;</a></h2>
