@@ -3,9 +3,11 @@
 - `fix`: 解决[issue](https://github.com/GentleCP/corpwechatbot/issues/9)
 - `feat`: 支持用户自行决定是否显示日志，在初始化`AppMsgSender`,`CorpwechatBot`实例的时候传入`log_level`参数决定日志的显示等级，可选等级有：`50(CRITICAL), 40(ERROR), 30(WARNING), 20(INFO,默认), 10(DEBUG), 0(NOTSET)`, 下面是一个例子：
 ```python
+import cptools
 from corpwechatbot import AppMsgSender
 
 app = AppMsgSender(log_level=20)  # 显示INFO及以上级别的log
+app2 = AppMsgSender(log_level=cptools.INFO)  # 你也可以选择易读性更高的传入方式
 ```
 
 ## v0.6.0: 21/08/05
