@@ -14,7 +14,6 @@ import base64
 from pathlib import Path
 from hashlib import md5
 from typing import Optional
-from cptools import LogHandler
 
 from corpwechatbot.util import is_image, is_file
 from corpwechatbot._sender import MsgSender
