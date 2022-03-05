@@ -1,4 +1,7 @@
 # 更新日志
+## v0.6.2: 22/03/05
+- `feat`: 现在创建群聊`app.create_chat(show_chat=True)`的时候可设置`show_chat`选项，表是否在群聊成功创建后发送第一条消息到群聊，让群聊显示在会话列表中，发送的消息会包含群聊id信息。
+
 ## v0.6.1: 21/08/22
 - `fix`: 解决[issue](https://github.com/GentleCP/corpwechatbot/issues/9)
 - `feat`: 支持用户自行决定是否显示日志，在初始化`AppMsgSender`,`CorpwechatBot`实例的时候传入`log_level`参数决定日志的显示等级，可选等级有：`50(CRITICAL), 40(ERROR), 30(WARNING), 20(INFO,默认), 10(DEBUG), 0(NOTSET)`, 下面是一个例子：

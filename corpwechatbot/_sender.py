@@ -248,12 +248,12 @@ class MsgSender(Sender):
         '''
 
     def _post(self, url, data):
-        '''
+        """
         发送消息统一方法，要求utf-8编码，该方法在MsgSender中实现，但不可通过该抽象类进行调用
         :param data: 传输的数据字典
         :param url:
         :return: 消息发送成功与否
-        '''
+        """
         now = time.time()
         self.queue.put(now)
         if self.queue.full():

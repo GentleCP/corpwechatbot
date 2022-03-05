@@ -35,11 +35,11 @@ class CorpWechatBot(MsgSender):
         self._media_api = self.base_url.format(OFFICIAL_APIS['WEBHOOK_MEDIA_UPLOAD'].format(self.key))
 
     def _get_corpkeys(self, key: str = ''):
-        '''
+        """
         get key from parameter or local
         :param key:
         :return:
-        '''
+        """
         if key:
             return {
                 'key': key
@@ -53,12 +53,12 @@ class CorpWechatBot(MsgSender):
               data: dict = {},
               media_path: Optional[str] = '',
               **kwargs):
-        '''
+        """
         :param msg_type:
         :param data:
         :param media_path:
         :return:
-        '''
+        """
         data['msgtype'] = msg_type
         if msg_type == 'image':
             img_content = Path(media_path).open('rb').read()
@@ -76,13 +76,13 @@ class CorpWechatBot(MsgSender):
         return self._post(self.webhook_send_api, data)
 
     def send_text(self, content, mentioned_list=[], mentioned_mobile_list=[]):
-        '''
+        """
         发送文本消息，
         :param content: 文本内容，最长不能超过2048字节，utf-8编码
         :param mentioned_list: userid列表，提醒群众某个成员，userid通过企业通讯录查看，'@all'则提醒所有人
         :param mentioned_mobile_list: 手机号列表，提醒手机号对应的成员，'@all'代表所有人，当不清楚userid时可替换
         :return: 消息发送结果
-        '''
+        """
         if not content:
             self.logger.error(self.errmsgs['text_error'])
             return {
@@ -99,11 +99,11 @@ class CorpWechatBot(MsgSender):
         return self._send(msg_type='text', data=data)
 
     def send_image(self, image_path=''):
-        '''
+        """
         发送图片类型，限制大小2M，支持JPG，PNG格式
         :param image_path: 图片文件路径
         :return: result
-        '''
+        """
         if not is_image(image_path):
             self.logger.error(self.errmsgs['image_error'])
             return {
@@ -119,14 +119,14 @@ class CorpWechatBot(MsgSender):
         return self._send(msg_type='image', data=data, media_path=image_path)
 
     def send_news(self, title='', desp='', url='', picurl=''):
-        '''
+        """
         发送图文消息
         :param title: 图文标题，不超过128个字节，超过会自动截断
         :param desp: 图文描述，可选，不超过512个字节，超过会自动截断
         :param url: 跳转链接
         :param picurl: 图片url，支持JPG、PNG格式，较好的效果为大图 1068*455，小图150*150。
         :return:
-        '''
+        """
         if not (title and url):
             self.logger.error(self.errmsgs['news_error'])
             return {
@@ -148,11 +148,11 @@ class CorpWechatBot(MsgSender):
         return self._send(msg_type='news', data=data)
 
     def send_markdown(self, content=''):
-        '''
+        """
         发送markdown类型数据，支持markdown语法
         :param content: mardkown原始数据或markdown文件路径
         :return: 消息发送结果
-        '''
+        """
         if not content:
             self.logger.error(self.errmsgs['markdown_error'])
             return {
@@ -167,11 +167,11 @@ class CorpWechatBot(MsgSender):
         return self._send(msg_type='markdown', data=data)
 
     def send_file(self, file_path: str):
-        '''
+        """
         发送文件
         :param file_path:
         :return:
-        '''
+        """
         if not is_file(file_path):
             self.logger.error(self.errmsgs['file_error'])
             return {
@@ -185,6 +185,3 @@ class CorpWechatBot(MsgSender):
         }
         return self._send(msg_type='file', data=data, media_path=file_path)
 
-if __name__ == "__main__":
-    bot = CorpWechatBot(log_level=20)
-    bot.send_text('123')

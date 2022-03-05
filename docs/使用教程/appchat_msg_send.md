@@ -15,10 +15,12 @@
 from corpwechatbot import AppMsgSender
 
 app = AppMsgSender()
-res = app.create_chat(users=['zhangsan', 'lisi'], owner='zhangsan', name="test", chatid="123")
+res = app.create_chat(users=['zhangsan', 'lisi'], owner='zhangsan', name="test", chatid="123", show_chat=True)
 print(res)
 ```
 > ⚠️注意此时在企业微信中还是看不到群聊的，但群聊已经创建了，需要发送一条消息，让群聊显示出来，请务必保存好返回得到的`chatid`，这是后面消息推送的主要参数
+
+> 😏 `v0.6.2`以后在创建群聊的时候可以指定`show_chat`参数（默认为True），表示是否在群聊创建后发送一条消息到创建的群聊，让其在会话列表中显示出来，消息会包含群聊的id信息
 
 ### 消息推送
 ```python

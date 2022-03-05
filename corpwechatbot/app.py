@@ -40,11 +40,11 @@ class AppMsgSender(MsgSender):
                  agentid: str = '',
                  log_level: int = 20,
                  **kwargs):
-        '''
+        """
         :param corpid: 企业id
         :param corpsecret: 应用密钥
         :param agentid: 应用id
-        '''
+        """
         super().__init__(log_level)
         corpkeys = self._get_corpkeys(corpid=corpid, corpsecret=corpsecret, agentid=agentid, **kwargs)
         self.corpid = corpkeys.get('corpid', '')
@@ -63,13 +63,13 @@ class AppMsgSender(MsgSender):
         self.msg_send_api = self.base_url.format(OFFICIAL_APIS['MESSAGE_SEND'].format(self.access_token))
 
     def _get_corpkeys(self, corpid: str = '', corpsecret: str = '', agentid: str = '', **kwargs):
-        '''
+        """
         get keys for app from parameter or local
         :param corpid:
         :param corpsecret:
         :param agentid:
         :return:
-        '''
+        """
         if corpid and corpsecret and agentid:
             return {
                 'corpid': corpid,
@@ -85,9 +85,9 @@ class AppMsgSender(MsgSender):
             return res
 
     def get_assess_token(self):
-        '''
+        """
         通过企业id和应用凭证密钥获取assess_token，用于消息推送，根据corpid和agentid识别不同的token
-        '''
+        """
         try:
             token_dict = json.loads(TOKEN_PATH.read_text())
         except FileNotFoundError:
@@ -124,21 +124,21 @@ class AppMsgSender(MsgSender):
             raise TokenGetError(f"token请求失败，原因：{res.get('errmsg', '无法获取token')}")
 
     def __list2str(self, datas: []):
-        '''
+        """
         将传入的list数据转换成 | 划分的字符串
         e.g. ['user1', 'user2'] -> 'user1|user2'
         :param datas:
         :return:
-        '''
+        """
         return "".join([item + '|' for item in datas])[:-1]
 
     def __check_type_and_send(self, msg_type, data, media_path):
-        '''
+        """
         :param msg_type:
         :param data:
         :param media_path:
         :return:
-        '''
+        """
         media_types = {'image', 'voice', 'video', 'file'}
         if msg_type in media_types:
             # 发送媒体消息
@@ -161,14 +161,14 @@ class AppMsgSender(MsgSender):
               data: dict = {},
               media_path: Optional[str] = '',
               **kwargs):
-        '''
+        """
         新的统一内部发送接口，供不同消息推送接口调用
-        :param msg_type: 
+        :param msg_type:
         :param data:
         :param media_path: 只有需要media id的时候才传入
         :param kwargs:
-        :return: 
-        '''
+        :return:
+        """
         # prepare data
         if not (kwargs.get('touser') or kwargs.get('toparty') or kwargs.get('totag')):
             # 三者均为空，默认发送全体成员
@@ -205,11 +205,11 @@ class AppMsgSender(MsgSender):
     def send_image(self,
                    image_path: str,
                    **kwargs):
-        '''
+        """
         发送图片，支持jpg、png、bmp
         :param image_path: 图片存储路径
         :return:
-        '''
+        """
         if not is_image(image_path):
             self.logger.error(self.errmsgs['image_error'])
             return {
@@ -221,11 +221,11 @@ class AppMsgSender(MsgSender):
     def send_voice(self,
                    voice_path: str,
                    **kwargs):
-        '''
+        """
         发送语音，2MB，播放长度不超过60s，仅支持AMR格式
         :param voice_path:
         :return:
-        '''
+        """
         if not is_voice(voice_path):
             self.logger.error(self.errmsgs['voice_error'])
             return {
@@ -237,11 +237,11 @@ class AppMsgSender(MsgSender):
     def send_video(self,
                    video_path: str,
                    **kwargs):
-        '''
+        """
         发送视频
         :param video_path:
         :return:
-        '''
+        """
         if not is_video(video_path):
             self.logger.error(self.errmsgs['video_error'])
             return {
@@ -253,11 +253,11 @@ class AppMsgSender(MsgSender):
     def send_file(self,
                   file_path: str,
                   **kwargs):
-        '''
+        """
         发送文件
         :param file_path:
         :return:
-        '''
+        """
         if not is_file(file_path):
             self.logger.error(self.errmsgs['file_error'])
             return {
@@ -269,13 +269,13 @@ class AppMsgSender(MsgSender):
     def send_text(self,
                   content: str,
                   **kwargs):
-        '''
+        """
         发送text消息
         :param content: 消息内容，最长不超过2048个字节，超过将
         :param safe: 是否是保密消息，False表示可对外分享，True表示不能分享且内容显示水印，默认为False，下面方法同，不再重复解释
         :param kwargs: touser, toparty, totag
         :return: send result
-        '''
+        """
         if not content:
             self.logger.error(self.errmsgs['text_error'])
             return {
@@ -296,14 +296,14 @@ class AppMsgSender(MsgSender):
                   url: str,
                   picurl: Optional[str],
                   **kwargs):
-        '''
+        """
         发送图文消息
         :param title: 图文标题，不超过128个字节，超过会自动截断
         :param desp: 图文描述，可选，不超过512个字节，超过会自动截断
         :param url: 跳转链接
         :param picurl: 图片url，支持JPG、PNG格式，较好的效果为大图 1068*455，小图150*150。
         :return:
-        '''
+        """
         if not (title and url):
             self.logger.error(self.errmsgs['news_error'])
             return {
@@ -332,7 +332,7 @@ class AppMsgSender(MsgSender):
                     content_source_url: Optional[str],
                     digest: Optional[str],
                     **kwargs):
-        '''
+        """
         发送mpnews消息
         :param title: 图文标题
         :param image_path: 缩略图所在路径
@@ -342,7 +342,7 @@ class AppMsgSender(MsgSender):
         :param digest: 图文消息描述
         :param kwargs:
         :return:
-        '''
+        """
         if not (title and image_path and content):
             self.logger.error(self.errmsgs['mpnews_error'])
             return {
@@ -366,11 +366,11 @@ class AppMsgSender(MsgSender):
     def send_markdown(self,
                       content: str,
                       **kwargs):
-        '''
+        """
         发送markdown消息
         :param content: markdown文本数据或markdown文件路径
         :return:
-        '''
+        """
         if not content:
             self.logger.error(self.errmsgs['markdown_error'])
             return {
@@ -393,14 +393,14 @@ class AppMsgSender(MsgSender):
                   url: str,
                   btntxt: Optional[str],
                   **kwargs):
-        '''
+        """
         发送卡片消息
         :param title: 标题，不超过128个字节，超过会自动截断
         :param desp: 描述，不超过512个字节，超过会自动截断
         :param url: 点击后跳转的链接
         :param btntxt: 按钮文字。 默认为“详情”， 不超过4个文字，超过自动截断
         :return:
-        '''
+        """
         if not (title and desp and url):
             self.logger.error(self.errmsgs['card_error'])
             return {
@@ -424,7 +424,7 @@ class AppMsgSender(MsgSender):
                       task_id: str,
                       btn: List[Dict],
                       **kwargs):
-        '''
+        """
         发送任务发片消息
         :param title: 标题，不超过128个字节，超过会自动截断（支持id转译）
         :param desp: 描述，不超过512个字节，超过会自动截断（支持id转译）
@@ -455,7 +455,7 @@ class AppMsgSender(MsgSender):
            'Agentid': 应用id
         }
         :return:
-        '''
+        """
         if not (title and task_id and btn):
             self.logger.error(self.errmsgs['taskcard_error'])
             return {
@@ -477,15 +477,17 @@ class AppMsgSender(MsgSender):
                     users: list,
                     name: Optional[str] = '',
                     owner: Optional[str] = '',
-                    chatid: Optional[str] = ''):
-        '''
+                    chatid: Optional[str] = '',
+                    show_chat: Optional[bool] = True):
+        """
         创建应用群聊
         :param users: 用户id列表，至少2人
         :param name: 群聊名称
         :param owner: 群主id，不指定会随机
         :param chatid:
+        :param show_chat: 群聊创建成功后是否发送一条消息让群聊在列表中显示出来（默认发送）
         :return:
-        '''
+        """
         if len(users) < 2:
             self.logger.error(self.errmsgs['create_chat_error'])
             return {
@@ -498,9 +500,10 @@ class AppMsgSender(MsgSender):
             "userlist": users,
             "chatid": chatid,
         }
-        return self._post(url=self.appchat_create_api, data=data)
-
-
-if __name__ == '__main__':
-    app = AppMsgSender(log_level=20)
-    app.send_text('123')
+        res = self._post(url=self.appchat_create_api, data=data)
+        if show_chat and res['errcode'] == 0:
+            self.logger.info('群聊创建成功，发送第一条消息')
+            self.send_text(content=f"群聊已创建，本群聊id为：{res['chatid']}", chatid=res['chatid'])
+            return res
+        else:
+            return res

@@ -15,6 +15,7 @@ from argparse import ArgumentParser
 from corpwechatbot.app import AppMsgSender
 from corpwechatbot.chatbot import CorpWechatBot
 
+
 def send_md(use='app', content=''):
     md_path = Path(content)
     if md_path.is_file():
@@ -25,6 +26,7 @@ def send_md(use='app', content=''):
     else:
         app = AppMsgSender()
         app.send_markdown(content)
+
 
 def send_txt(use='app', content=''):
     if use == 'bot':
@@ -46,4 +48,3 @@ def main():
         send_txt(use=args.use, content=args.text)
     if args.markdown:
         send_md(use=args.use, content=args.markdown)
-

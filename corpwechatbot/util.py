@@ -12,7 +12,6 @@
 """
 
 from pathlib import Path
-from hashlib import sha1
 
 
 def is_image(image_path: str):
@@ -60,6 +59,5 @@ def is_file(file_path: str):
         return False
     return True
 
-def cal_signature(token, timestamp, nonce, msg_encrypt):
-    return
+
 
