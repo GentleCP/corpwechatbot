@@ -611,11 +611,12 @@
 <div class="highlight"><pre><span></span><code><span class="kn">from</span> <span class="nn">corpwechatbot</span> <span class="kn">import</span> <span class="n">AppMsgSender</span>
 
 <span class="n">app</span> <span class="o">=</span> <span class="n">AppMsgSender</span><span class="p">()</span>
-<span class="n">res</span> <span class="o">=</span> <span class="n">app</span><span class="o">.</span><span class="n">create_chat</span><span class="p">(</span><span class="n">users</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;zhangsan&#39;</span><span class="p">,</span> <span class="s1">&#39;lisi&#39;</span><span class="p">],</span> <span class="n">owner</span><span class="o">=</span><span class="s1">&#39;zhangsan&#39;</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;test&quot;</span><span class="p">,</span> <span class="n">chatid</span><span class="o">=</span><span class="s2">&quot;123&quot;</span><span class="p">)</span>
+<span class="n">res</span> <span class="o">=</span> <span class="n">app</span><span class="o">.</span><span class="n">create_chat</span><span class="p">(</span><span class="n">users</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;zhangsan&#39;</span><span class="p">,</span> <span class="s1">&#39;lisi&#39;</span><span class="p">],</span> <span class="n">owner</span><span class="o">=</span><span class="s1">&#39;zhangsan&#39;</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;test&quot;</span><span class="p">,</span> <span class="n">chatid</span><span class="o">=</span><span class="s2">&quot;123&quot;</span><span class="p">,</span> <span class="n">show_chat</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 <span class="nb">print</span><span class="p">(</span><span class="n">res</span><span class="p">)</span>
 </code></pre></div>
 <blockquote>
 <p>⚠️注意此时在企业微信中还是看不到群聊的，但群聊已经创建了，需要发送一条消息，让群聊显示出来，请务必保存好返回得到的<code>chatid</code>，这是后面消息推送的主要参数</p>
+<p>😏 <code>v0.6.2</code>以后在创建群聊的时候可以指定<code>show_chat</code>参数（默认为True），表示是否在群聊创建后发送一条消息到创建的群聊，让其在会话列表中显示出来，消息会包含群聊的id信息</p>
 </blockquote>
 <h3 id="_4">消息推送<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h3>
 <p><div class="highlight"><pre><span></span><code><span class="kn">from</span> <span class="nn">corpwechatbot</span> <span class="kn">import</span> <span class="n">AppMsgSender</span>
