@@ -1,4 +1,6 @@
 # 更新日志
+## v0.6.3: 22/08/02
+- `feat`: 现在支持在创建`AppMsgSender,CorpWechatBot`时提供`proxies`参数，通过代理发送消息，适合内网环境中无法直接连接外网的情况
 ## v0.6.2: 22/03/05
 - `feat`: 现在创建群聊`app.create_chat(show_chat=True)`的时候可设置`show_chat`选项，表是否在群聊成功创建后发送第一条消息到群聊，让群聊显示在会话列表中，发送的消息会包含群聊id信息。
 

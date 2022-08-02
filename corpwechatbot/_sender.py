@@ -5,7 +5,7 @@
             Name: _sender.py
             Description:
             Author: GentleCP
-            Email: 574881148@qq.com
+            Email: me@gentlecp.com
             WebSite: https://blog.gentlecp.com
             Create Date: 2021/4/8 
 -----------------End-----------------------------
@@ -25,77 +25,77 @@ from corpwechatbot.error import KeyConfigError, MethodNotImplementedError, Token
 
 
 class Sender(ABC):
-    '''
+    """
     Abstract class of sender, define the interface of all the senders
-    '''
+    """
 
     @abstractmethod
     def send_text(self, *args, **kwargs):
-        '''
+        """
         send text message
         :return:
-        '''
+        """
 
     @abstractmethod
     def send_image(self, *args, **kwargs):
-        '''
+        """
         send image message
         :return:
-        '''
+        """
 
     @abstractmethod
     def send_voice(self, *args, **kwargs):
-        '''
+        """
         发送语音消息
-        '''
+        """
 
     @abstractmethod
     def send_video(self, *args, **kwargs):
-        '''
+        """
         发送视频消息
-        '''
+        """
 
     @abstractmethod
     def send_news(self, *args, **kwargs):
-        '''
+        """
         send news
         :return:
-        '''
+        """
 
     @abstractmethod
     def send_markdown(self, *args, **kwargs):
-        '''
+        """
         send markdown message
         :return:
-        '''
+        """
 
     @abstractmethod
     def send_file(self, *args, **kwargs):
-        '''
+        """
         send file
         :return:
-        '''
+        """
 
     @abstractmethod
     def send_card(self, *args, **kwargs):
-        '''
+        """
         发送卡片消息
-        '''
+        """
 
     @abstractmethod
     def send_taskcard(self, *args, **kwargs):
-        '''
+        """
         发送任务卡片消息
-        '''
+        """
 
     @abstractmethod
     def send_mpnews(self, *args, **kwargs):
-        '''
+        """
         发送mpnews图文消息
         :param args:
         :param kwargs:
         :return:
-        '''
+        """
 
 
 class MsgSender(Sender):
@@ -126,82 +126,83 @@ class MsgSender(Sender):
         self._media_api = ''
         self.key_cfg = ConfigParser()
         self.base_url = 'https://qyapi.weixin.qq.com{}'  # 后面接各种不同的接口suffix
+        self.proxies = kwargs.get('proxies', None)
 
     def send_text(self, *args, **kwargs):
-        '''
+        """
         send text message
         :return:
-        '''
+        """
         raise MethodNotImplementedError
 
     def send_image(self, *args, **kwargs):
-        '''
+        """
         send image message
         :return:
-        '''
+        """
         raise MethodNotImplementedError
 
     def send_voice(self, *args, **kwargs):
-        '''
+        """
         发送语音消息
-        '''
+        """
         raise MethodNotImplementedError
 
     def send_video(self, *args, **kwargs):
-        '''
+        """
         发送视频消息
-        '''
+        """
         raise MethodNotImplementedError
 
     def send_news(self, *args, **kwargs):
-        '''
+        """
         send news
         :return:
-        '''
+        """
         raise MethodNotImplementedError
 
     def send_markdown(self, *args, **kwargs):
-        '''
+        """
         send markdown message
         :return:
-        '''
+        """
         raise MethodNotImplementedError
 
     def send_file(self, *args, **kwargs):
-        '''
+        """
         send file
         :return:
-        '''
+        """
         raise MethodNotImplementedError
 
     def send_card(self, *args, **kwargs):
-        '''
+        """
         发送卡片消息
-        '''
+        """
         raise MethodNotImplementedError
 
     def send_taskcard(self, *args, **kwargs):
-        '''
+        """
         发送卡片消息
-        '''
+        """
         raise MethodNotImplementedError
 
     def send_mpnews(self, *args, **kwargs):
-        '''
+        """
         发送mpnews图文消息
         :param args:
         :param kwargs:
         :return:
-        '''
+        """
         raise MethodNotImplementedError
 
     def _get_local_keys(self, section: str, options: [], **kwargs):
-        '''
+        """
         当没有直接传入keys时，尝试从本地文件`$HOME/.corpwechatbot_key`获取
         :param section: 选择的section，用于指定app还是bot
         :param options:
         :return:
-        '''
+        """
         self.logger.debug('You have not delivered a key parameter, try to get it from local files')
         key_path = Path(kwargs.get('key_path', Path.home().joinpath('.corpwechatbot_key')))
         if key_path.is_file():
@@ -217,12 +218,12 @@ class MsgSender(Sender):
     def _get_media_id(self,
                       media_type: str,
                       p_media: Path):
-        '''
+        """
         获取media id，微信要求文件先上传到其后端服务器，再获取相应media id
         :param media_type:
         :param p_media:
         :return:
-        '''
+        """
         files = {
             (None, (p_media.name, p_media.open('rb'), f'{media_type}/{p_media.suffix[1:]}'))
         }
@@ -239,13 +240,13 @@ class MsgSender(Sender):
               media_path: Optional[str] = '',
               **kwargs
               ):
-        '''
+        """
         :param msg_type:
         :param data:
         :param media_path:
         :param kwargs:
         :return:
-        '''
+        """
 
     def _post(self, url, data):
         """
@@ -265,7 +266,7 @@ class MsgSender(Sender):
                 time.sleep(sleep_time)
         try:
             post_data = json.dumps(data)
-            response = requests.post(url, headers=self.headers, data=post_data)
+            response = requests.post(url, headers=self.headers, data=post_data, proxies=self.proxies)
         except requests.exceptions.HTTPError as exc:
             self.logger.error(f"发送失败， HTTP error:{exc.response.status_code} , 原因: {exc.response.reason}")
             raise

@@ -14,7 +14,7 @@
 __name__ = 'corpwechatbot'
 __description__ = 'python interface for corpwechat message sending'
 __url__ = 'https://github.com/GentleCP/corpwechatbot'
-__version__ = '0.6.2'
+__version__ = '0.6.3'
 __author__ = 'GentleCP'
 __author_email__ = 'me@gentlecp.com'
 __license__ = 'GPL v3'

@@ -10,18 +10,16 @@
             Create Date: 2021/4/7
 -----------------End-----------------------------
 """
-import time
 import requests
 import json
 import hashlib
 from typing import Optional
 from datetime import datetime
 from pathlib import Path
-from cptools import LogHandler
 from typing import List, Dict
 
 from corpwechatbot._sender import MsgSender
-from corpwechatbot.error import TokenGetError, MethodNotImplementedError
+from corpwechatbot.error import TokenGetError
 from corpwechatbot.util import is_image, is_voice, is_video, is_file
 from corpwechatbot.config import OFFICIAL_APIS
 
@@ -45,7 +43,7 @@ class AppMsgSender(MsgSender):
         :param corpsecret: 应用密钥
         :param agentid: 应用id
         """
-        super().__init__(log_level)
+        super().__init__(log_level, **kwargs)
         corpkeys = self._get_corpkeys(corpid=corpid, corpsecret=corpsecret, agentid=agentid, **kwargs)
         self.corpid = corpkeys.get('corpid', '')
         self.corpsecret = corpkeys.get('corpsecret', '')
@@ -108,7 +106,7 @@ class AppMsgSender(MsgSender):
                 return token_info['token']
 
     def __get_access_token(self, token_dict={}):
-        res = requests.get(self.get_token_api).json()
+        res = requests.get(self.get_token_api, proxies=self.proxies).json()
         if res.get('errcode') == 0:
             self.logger.info("token请求成功")
             token = res.get('access_token')
@@ -507,3 +505,4 @@ class AppMsgSender(MsgSender):
             return res
         else:
             return res
+

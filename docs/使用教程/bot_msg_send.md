@@ -5,9 +5,13 @@
 
 要使用群聊机器人实现消息推送，你需要先实例化一个`CorpWechatBot`对象，如下：
 ```python
+import cptools
 from corpwechatbot.chatbot import CorpWechatBot
 # fromo corpwechatbot import CorpWechatBot  # both will work
-bot = CorpWechatBot(key='')  # 你的机器人key，通过群聊添加机器人获取
+bot = CorpWechatBot(key='',# 你的机器人key，通过群聊添加机器人获取
+                    log_level=cptools.INFO, # 设置日志发送等级，INFO, ERROR, WARNING, CRITICAL,可选
+                    proxies={'http':'http:example.com', 'https':'https:example.com'}  # 设置代理，可选
+                    )  
 
 # 如果你在本地配置添加了企业微信本地配置文件，也可以直接初始化CorpWechatBot，而无需再显式传入密钥参数
 # bot = CorpWechatBot()

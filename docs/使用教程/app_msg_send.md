@@ -3,12 +3,16 @@
 
 该推送会直接传至你的个人微信上，你会像收到好友消息一样收到通知信息，你需要先初始化一个`AppMsgSender`实例对象，如下：
 ```python
+import cptools
 from corpwechatbot.app import AppMsgSender
 # from corpwehcatbot import AppMsgSender  # both will work
 
 app = AppMsgSender(corpid='',  # 你的企业id
                    corpsecret='',  # 你的应用凭证密钥
-                   agentid='')   # 你的应用id
+                   agentid='', # 你的应用id
+                   log_level=cptools.INFO, # 设置日志发送等级，INFO, ERROR, WARNING, CRITICAL,可选
+                   proxies={'http':'http:example.com', 'https':'https:example.com'}  # 设置代理，可选
+                   )   
 
 # 如果你在本地配置添加了企业微信本地配置文件，也可以直接初始化AppMsgSender，而无需再显式传入密钥参数
 # app = AppMsgSender()

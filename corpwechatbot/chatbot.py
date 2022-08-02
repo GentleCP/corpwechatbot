@@ -27,8 +27,9 @@ class CorpWechatBot(MsgSender):
 
     def __init__(self,
                  key: str = '',
-                 log_level: int = 20):
-        super().__init__(log_level)
+                 log_level: int = 20,
+                 **kwargs):
+        super().__init__(log_level, **kwargs)
         self.key = self._get_corpkeys(key=key).get('key', '')
         self.headers = {'Content-Type': 'application/json; charset=utf-8'}
         self.webhook_send_api = self.base_url.format(OFFICIAL_APIS['WEBHOOK_SEND'].format(self.key))
