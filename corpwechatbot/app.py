@@ -281,7 +281,6 @@ class AppMsgSender(MsgSender):
                 'errmsg': self.errmsgs['text_error']
             }
         data = {
-            "chatid": kwargs.get('chatid', ''),
             "text": {
                 "content": content
             },
@@ -375,9 +374,11 @@ class AppMsgSender(MsgSender):
                 'errcode': 404,
                 'errmsg': self.errmsgs['markdown_error']
             }
-        md_path = Path(content)
-        if md_path.is_file():
-            content = md_path.read_text()
+        if content.endswith('.md'):
+            try:
+                content = Path(content).read_text()
+            except (OSError, FileNotFoundError) as e:
+                self.logger.warning('你可能正在尝试发送一个markdown文件，但文件并不存在或文件名过长，将直接发送内容.')
         data = {
             "markdown": {
                 "content": content,

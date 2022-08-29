@@ -79,7 +79,7 @@ app.send_file(file_path='test.txt')
 
 ### markdown消息
 
-markdown类型消息，支持markdown语法，**目前仅支持企业微信查看**
+markdown类型消息，支持markdown语法，**目前仅支持企业微信查看**，若输入内容以`.md`结尾，则会尝试读取对应文件内容发送。
 
 ```python
 app.send_markdown(content='# 面对困难的秘诀 \n > 加油，奥利给！')

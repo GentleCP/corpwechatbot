@@ -160,6 +160,11 @@ class CorpWechatBot(MsgSender):
                 'errcode': 404,
                 'errmsg': self.errmsgs['markdown_error']
             }
+        if content.endswith('.md'):
+            try:
+                content = Path(content).read_text()
+            except (OSError, FileNotFoundError) as e:
+                self.logger.warning('你可能正在尝试发送一个markdown文件，但文件并不存在或文件名过长，将直接发送内容.')
         data = {
             "markdown": {
                 "content": content

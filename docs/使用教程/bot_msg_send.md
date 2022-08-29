@@ -32,6 +32,7 @@ bot.send_image(image_path='test.png')
 > ![img_8.png](../img/bot_image.png)
 
 ### markdown消息
+markdown类型消息，支持markdown语法，**目前仅支持企业微信查看**，若输入内容以`.md`结尾，则会尝试读取对应文件内容发送。
 
 ```python
 bot.send_markdown(content='# 面对困难的秘诀 \n > 加油，奥利给！')

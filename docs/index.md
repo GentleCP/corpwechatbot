@@ -63,13 +63,7 @@ pip install -U corpwechatbot
 
 > 开发任务队列，排在前面的会优先考虑开发，如果你有希望实现的功能，可以提交`issue`进行说明，合理的会被采纳
 
-- [ ] 兼容`python2`
-- [ ] 除文本消息和任务卡片消息以外的其他被动消息回复支持
-- [ ] 完善`web`部分的内容
-    - [ ] 针对被动回复消息的`error` 进行处理
-    - [ ] 优化代码和注释
-    
-  
+
 ## Author
 
 [@GentleCP](https://github.com/GentleCP)
