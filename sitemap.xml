@@ -2,57 +2,57 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
     <url>
          <loc>https://corpwechatbot.gentlecp.com/</loc>
-         <lastmod>2022-08-02</lastmod>
+         <lastmod>2022-08-29</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://corpwechatbot.gentlecp.com/changelog/</loc>
-         <lastmod>2022-08-02</lastmod>
+         <lastmod>2022-08-29</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://corpwechatbot.gentlecp.com/features/</loc>
-         <lastmod>2022-08-02</lastmod>
+         <lastmod>2022-08-29</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://corpwechatbot.gentlecp.com/questions/</loc>
-         <lastmod>2022-08-02</lastmod>
+         <lastmod>2022-08-29</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://corpwechatbot.gentlecp.com/quickstart/</loc>
-         <lastmod>2022-08-02</lastmod>
+         <lastmod>2022-08-29</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://corpwechatbot.gentlecp.com/%E4%BD%BF%E7%94%A8%E6%95%99%E7%A8%8B/</loc>
-         <lastmod>2022-08-02</lastmod>
+         <lastmod>2022-08-29</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://corpwechatbot.gentlecp.com/%E4%BD%BF%E7%94%A8%E6%95%99%E7%A8%8B/app_msg_send/</loc>
-         <lastmod>2022-08-02</lastmod>
+         <lastmod>2022-08-29</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://corpwechatbot.gentlecp.com/%E4%BD%BF%E7%94%A8%E6%95%99%E7%A8%8B/appchat_msg_send/</loc>
-         <lastmod>2022-08-02</lastmod>
+         <lastmod>2022-08-29</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://corpwechatbot.gentlecp.com/%E4%BD%BF%E7%94%A8%E6%95%99%E7%A8%8B/bot_msg_send/</loc>
-         <lastmod>2022-08-02</lastmod>
+         <lastmod>2022-08-29</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://corpwechatbot.gentlecp.com/%E4%BD%BF%E7%94%A8%E6%95%99%E7%A8%8B/callback_configuration/</loc>
-         <lastmod>2022-08-02</lastmod>
+         <lastmod>2022-08-29</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://corpwechatbot.gentlecp.com/%E4%BD%BF%E7%94%A8%E6%95%99%E7%A8%8B/terminal_msg_send/</loc>
-         <lastmod>2022-08-02</lastmod>
+         <lastmod>2022-08-29</lastmod>
          <changefreq>daily</changefreq>
     </url>
 </urlset>
